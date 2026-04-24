@@ -127,8 +127,8 @@ The Unlockd platform is split into two independent projects — `frontend/` (Nex
     - _Requirements: 1.1, 1.2, 1.3_
     - **Owner: Om (Frontend Lead)**
 
-- [ ] 6. Frontend — Job Discovery Page
-  - [ ] 6.1 Implement `JobCard` component in `frontend/components/JobCard.tsx`
+- [x] 6. Frontend — Job Discovery Page
+  - [x] 6.1 Implement `JobCard` component in `frontend/components/JobCard.tsx`
     - Display job title, company, location, type, required skills, and "Select" toggle button
     - Visual selected/unselected state
     - ARIA attributes for selection state (accessible to assistive technologies)
@@ -136,18 +136,18 @@ The Unlockd platform is split into two independent projects — `frontend/` (Nex
     - _Requirements: 3.2, 3.4, 19.5_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 6.2 Implement `JobGrid` component in `frontend/components/JobGrid.tsx`
+  - [x] 6.2 Implement `JobGrid` component in `frontend/components/JobGrid.tsx`
     - Responsive grid layout rendering all `JobCard` components
     - Pass `maxReached` to disable unselected cards when 5 are selected
     - _Requirements: 3.1, 3.9, 19.1_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 6.3 Implement `SelectionCounter` component in `frontend/components/SelectionCounter.tsx`
+  - [x] 6.3 Implement `SelectionCounter` component in `frontend/components/SelectionCounter.tsx`
     - Display "X jobs selected" with min/max context
     - _Requirements: 3.5_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 6.4 Implement Job Discovery page at `frontend/app/jobs/page.tsx`
+  - [x] 6.4 Implement Job Discovery page at `frontend/app/jobs/page.tsx`
     - Load jobs from `frontend/lib/jobs.ts`
     - Selection logic: toggle select/deselect, enforce min 2 / max 5
     - Display `SelectionCounter`
