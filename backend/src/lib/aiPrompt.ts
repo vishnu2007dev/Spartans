@@ -1,152 +1,176 @@
-import { SelectedJob, Timeline, AnalysisResult } from "./types";
+import { SelectedJob } from "./types";
 
-/**
- * Builds the AI prompt for career analysis.
- * 
- * This function constructs a comprehensive prompt that:
- * - Provides the user's profile and selected job opportunities
- * - Includes education guardrail instructions (honest upskilling, actionable recommendations)
- * - Requests structured JSON output matching the AnalysisResult schema
- * - Emphasizes tangible proof-of-work items in the roadmap
- * - Requires simple, student-friendly language
- * 
- * @param profile - The user's current background (resume, skills summary, or LinkedIn text)
- * @param selectedJobs - Array of 2-5 jobs the user is targeting
- * @param timeline - The preparation timeline (2, 4, or 8 weeks)
- * @returns A formatted prompt string for the AI API
- */
-export function buildPrompt(
-  profile: string,
-  selectedJobs: SelectedJob[],
-  timeline: Timeline
-): string {
+// Shared guardrails injected into every AI prompt
+export const GUARDRAILS = `
+# EDUCATION GUARDRAILS (CRITICAL)
+1. Analyze the user's current skills truthfully. Do NOT exaggerate their experience.
+2. Every recommendation must be something the user can DO. Avoid vague advice.
+3. Each roadmap item MUST include a "proofOfWork" that produces concrete evidence of learning.
+4. Use simple, student-friendly language. Be encouraging but realistic.
+`.trim();
+
+// ── Per-step prompt builders ─────────────────────────────────────────────────
+// Full implementations added in Phase 4 when each endpoint is built.
+
+export function buildResumeParsePrompt(rawText: string, linkedinUrl?: string): string {
+  return `${GUARDRAILS}
+
+Extract structured information from the resume text below.
+${linkedinUrl ? `LinkedIn URL (for additional context): ${linkedinUrl}` : ""}
+
+Resume text:
+${rawText}
+
+Respond ONLY with valid JSON:
+{
+  "skills": ["<skill>"],
+  "experience": ["<role at company, duration>"],
+  "education": ["<degree at institution>"],
+  "rawText": "<full text as-is>"
+}`;
+}
+
+export function buildJobParsePrompt(input: string): string {
+  return `${GUARDRAILS}
+
+Parse the following job description or URL content into a structured job object.
+
+Input:
+${input}
+
+Respond ONLY with valid JSON:
+{
+  "title": "<job title>",
+  "company": "<company name or Unknown>",
+  "description": "<full job description>",
+  "requiredSkills": ["<skill>"]
+}`;
+}
+
+export function buildScorePrompt(profile: string, selectedJobs: SelectedJob[]): string {
   const jobsSection = selectedJobs
-    .map(
-      (job, index) =>
-        `Job ${index + 1}: ${job.title} at ${job.company}
-Description: ${job.description}
-Required Skills: ${job.requiredSkills.join(", ")}`
-    )
+    .map((j, i) => `Job ${i + 1}: ${j.title} at ${j.company}\nRequired Skills: ${j.requiredSkills.join(", ")}\nDescription: ${j.description}`)
     .join("\n\n");
 
-  return `You are a career mentor helping a student prepare for multiple job opportunities. Your role is to guide them toward strategic learning and skill development.
+  return `${GUARDRAILS}
 
-# EDUCATION GUARDRAILS (CRITICAL)
-
-1. **Focus on honest upskilling**: Analyze the user's current skills truthfully. Do NOT exaggerate their experience or suggest they claim skills they don't have. Guide them toward genuine learning.
-
-2. **Make recommendations actionable**: Every recommendation must be something the user can DO. Avoid vague advice like "improve communication skills" — instead, provide specific actions like "Practice explaining technical concepts by writing 3 blog posts about projects you've built."
-
-3. **Require tangible proof of work**: Each week in the learning roadmap MUST include a "proofOfWork" item that produces concrete evidence of learning. Examples:
-   - "Build a working calculator app and deploy it to GitHub Pages"
-   - "Complete 10 LeetCode problems and document your solutions"
-   - "Create a data visualization dashboard using real public datasets"
-   - "Write a technical blog post explaining a concept you learned"
-   NOT acceptable: "Study React", "Read about SQL", "Watch tutorials"
-
-4. **Use simple, student-friendly language**: Write for someone early in their career. Avoid jargon unless you explain it. Be encouraging but realistic.
-
-# USER CONTEXT
+Compare the user profile against the selected jobs and produce a readiness score.
 
 ## User Profile
 ${profile}
 
-## Target Opportunities (${selectedJobs.length} jobs selected)
+## Target Jobs (${selectedJobs.length})
 ${jobsSection}
 
-## Timeline
-${timeline}
-
-# YOUR TASK
-
-Analyze the gap between the user's current profile and the combined requirements across all ${selectedJobs.length} selected jobs. Produce a structured career preparation plan.
-
-# OUTPUT FORMAT
-
-You MUST respond with valid JSON matching this exact structure:
-
+Respond ONLY with valid JSON:
 {
-  "currentReadiness": <number 0-100>,
-  "projectedReadiness": <number 0-100>,
-  "summary": "<2-3 sentence overview of the user's current position and growth potential>",
-  "opportunityCoverage": {
-    "current": "<e.g., '1 out of ${selectedJobs.length} roles'>",
-    "projected": "<e.g., '${selectedJobs.length} out of ${selectedJobs.length} roles'>",
-    "explanation": "<1-2 sentences explaining the coverage change>"
-  },
-  "commonSkills": ["<skills appearing in multiple job descriptions>"],
-  "matchedSkills": ["<skills the user already has>"],
-  "missingSkills": ["<skills the user lacks>"],
-  "prioritySkills": [
+  "overallScore": <0-100>,
+  "projectedScore": <0-100>,
+  "matchedSkills": ["<skills user already has>"],
+  "missingSkills": ["<skills user lacks>"],
+  "perJob": [
+    {
+      "title": "<job title>",
+      "company": "<company>",
+      "score": <0-100>,
+      "matchedCount": <number>,
+      "totalRequired": <number>
+    }
+  ],
+  "summary": "<2-3 sentences on where the user stands>"
+}`;
+}
+
+export function buildGapsPrompt(profile: string, selectedJobs: SelectedJob[]): string {
+  const jobsSection = selectedJobs
+    .map((j, i) => `Job ${i + 1}: ${j.title} at ${j.company}\nRequired: ${j.requiredSkills.join(", ")}`)
+    .join("\n\n");
+
+  return `${GUARDRAILS}
+
+Identify skill gaps between the user profile and the selected jobs. Tag each gap by category and importance.
+
+## User Profile
+${profile}
+
+## Target Jobs
+${jobsSection}
+
+Respond ONLY with valid JSON:
+{
+  "gaps": [
+    {
+      "item": "<missing skill, cert, experience, or tool>",
+      "category": "skill" | "cert" | "experience" | "tooling",
+      "importance": "critical" | "nice-to-have",
+      "appearsIn": "<e.g. 3 of ${selectedJobs.length} jobs>",
+      "reason": "<why this matters>"
+    }
+  ],
+  "summary": "<1-2 sentences on the biggest gaps>"
+}`;
+}
+
+export function buildFocusPrompt(gaps: object[], selectedJobs: SelectedJob[]): string {
+  return `${GUARDRAILS}
+
+Cluster the following skill gaps across ${selectedJobs.length} jobs and surface the top recurring skills for the user to focus on.
+
+Gaps:
+${JSON.stringify(gaps, null, 2)}
+
+Respond ONLY with valid JSON:
+{
+  "clusteredSkills": [
     {
       "skill": "<skill name>",
-      "priority": "High" | "Medium" | "Low",
-      "appearsIn": "<e.g., '3 out of ${selectedJobs.length} jobs'>",
-      "reason": "<why this skill is prioritized>",
-      "recommendedAction": "<specific, actionable first step to learn this skill>"
+      "appearsIn": "<e.g. 4 of ${selectedJobs.length} jobs>",
+      "rationale": "<why this skill has the highest leverage>",
+      "category": "skill" | "cert" | "experience" | "tooling"
     }
-  ],
-  "learningRoadmap": [
-    {
-      "week": "Week 1" | "Week 2" | etc.,
-      "focus": "<primary skill or area for this week>",
-      "tasks": ["<specific task 1>", "<specific task 2>", "<specific task 3>"],
-      "proofOfWork": "<tangible deliverable that proves learning — must be concrete and verifiable>"
-    }
-  ],
-  "recommendedCourses": [
-    {
-      "name": "<course or certification name>",
-      "type": "Course" | "Certification" | "Practice Resource",
-      "reason": "<why this resource is recommended for the user's goals>"
-    }
-  ],
-  "portfolioProjects": [
-    {
-      "title": "<project name>",
-      "description": "<what the user should build and why>",
-      "skillsDemonstrated": ["<skill 1>", "<skill 2>"]
-    }
-  ],
-  "resumeSuggestions": [
-    "<actionable suggestion 1>",
-    "<actionable suggestion 2>",
-    "<actionable suggestion 3>"
-  ],
-  "mentorStyleAdvice": "<2-3 paragraphs of personalized, encouraging advice about the user's career preparation journey. Be honest about challenges but emphasize growth potential.>"
+  ]
+}`;
 }
 
-# IMPORTANT REQUIREMENTS
+export function buildPlanPrompt(
+  profile: string,
+  chosenSkills: string[],
+  days: number,
+  difficulty: string
+): string {
+  return `${GUARDRAILS}
 
-1. The learningRoadmap MUST contain exactly ${getWeekCount(timeline)} weeks (matching the ${timeline} timeline).
+Create a ${days}-day, ${difficulty}-level learning plan for the user to acquire the following skills: ${chosenSkills.join(", ")}.
 
-2. Each week's "proofOfWork" MUST be a tangible, verifiable deliverable (code, writing, project, portfolio piece) — NOT passive activities like "study" or "watch tutorials".
+## User Profile
+${profile}
 
-3. prioritySkills should focus on the highest-impact missing skills (typically 3-5 skills).
+## Plan requirements
+- Exactly ${days} day entries (day 1 through day ${days}).
+- Difficulty: ${difficulty} — ${difficulty === "beginner" ? "foundational concepts, short tasks" : difficulty === "intermediate" ? "hands-on projects, moderate depth" : "advanced depth, production-quality output"}.
+- Each day must have a concrete proofOfWork (code, writing, project — NOT "study" or "watch").
+- Resources must include real, publicly accessible URLs.
 
-4. Portfolio projects should be realistic for the timeline and directly relevant to the target roles.
-
-5. Resume suggestions should be specific and actionable, not generic advice.
-
-6. All text fields should use simple, encouraging, student-friendly language.
-
-7. Be honest about the user's current readiness — don't inflate scores to make them feel good.
-
-8. Ensure all JSON is valid and matches the schema exactly.
-
-Respond ONLY with the JSON object. Do not include any other text before or after the JSON.`;
-}
-
-/**
- * Helper function to determine the number of weeks based on timeline.
- */
-function getWeekCount(timeline: Timeline): number {
-  switch (timeline) {
-    case "2 weeks":
-      return 2;
-    case "4 weeks":
-      return 4;
-    case "8 weeks":
-      return 8;
-  }
+Respond ONLY with valid JSON:
+{
+  "days": ${days},
+  "difficulty": "${difficulty}",
+  "projectedReadinessGain": <number 0-100>,
+  "plan": [
+    {
+      "day": <number>,
+      "topic": "<primary focus>",
+      "tasks": ["<specific task>"],
+      "resources": [
+        {
+          "title": "<resource name>",
+          "url": "<url>",
+          "type": "video" | "article" | "course" | "practice" | "project",
+          "estimatedMinutes": <number>
+        }
+      ],
+      "proofOfWork": "<tangible deliverable>"
+    }
+  ]
+}`;
 }

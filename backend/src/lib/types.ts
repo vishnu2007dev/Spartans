@@ -1,6 +1,11 @@
 import { z } from "zod";
 
-// ── TypeScript Interfaces (duplicated from frontend/lib/types.ts) ──
+// ── Primitives ──────────────────────────────────────────────────────────────
+
+export type Days = 7 | 14 | 28;
+export type Difficulty = "beginner" | "intermediate" | "advanced";
+
+// ── Shared job types ─────────────────────────────────────────────────────────
 
 export interface Job {
   id: string;
@@ -21,64 +26,97 @@ export interface SelectedJob {
   requiredSkills: string[];
 }
 
-export type Timeline = "2 weeks" | "4 weeks" | "8 weeks";
+// ── Step 1 — Resume parsing ──────────────────────────────────────────────────
+
+export interface ParsedResume {
+  skills: string[];
+  experience: string[];
+  education: string[];
+  rawText: string;
+}
+
+// ── Step 2 — Job input ───────────────────────────────────────────────────────
 
 export interface AnalyzeRequest {
   profile: string;
   selectedJobs: SelectedJob[];
-  timeline: Timeline;
 }
 
-export interface OpportunityCoverage {
-  current: string;
-  projected: string;
-  explanation: string;
+// ── Step 3 — Score ───────────────────────────────────────────────────────────
+
+export interface PerJobScore {
+  title: string;
+  company: string;
+  score: number;
+  matchedCount: number;
+  totalRequired: number;
 }
 
-export interface PrioritySkill {
-  skill: string;
-  priority: "High" | "Medium" | "Low";
+export interface ScoreResult {
+  overallScore: number;
+  projectedScore: number;
+  matchedSkills: string[];
+  missingSkills: string[];
+  perJob: PerJobScore[];
+  summary: string;
+}
+
+// ── Step 4 — Gaps ────────────────────────────────────────────────────────────
+
+export type GapCategory = "skill" | "cert" | "experience" | "tooling";
+export type GapImportance = "critical" | "nice-to-have";
+
+export interface Gap {
+  item: string;
+  category: GapCategory;
+  importance: GapImportance;
   appearsIn: string;
   reason: string;
-  recommendedAction: string;
 }
 
-export interface RoadmapWeek {
-  week: string;
-  focus: string;
+export interface GapsResult {
+  gaps: Gap[];
+  summary: string;
+}
+
+// ── Step 5 — Skill focus ─────────────────────────────────────────────────────
+
+export interface ClusteredSkill {
+  skill: string;
+  appearsIn: string;
+  rationale: string;
+  category: GapCategory;
+}
+
+export interface FocusResult {
+  clusteredSkills: ClusteredSkill[];
+}
+
+// ── Step 6 — Learning path ───────────────────────────────────────────────────
+
+export interface LearningResource {
+  title: string;
+  url: string;
+  type: "video" | "article" | "course" | "practice" | "project";
+  estimatedMinutes: number;
+}
+
+export interface LearningDay {
+  day: number;
+  topic: string;
   tasks: string[];
+  resources: LearningResource[];
   proofOfWork: string;
 }
 
-export interface Course {
-  name: string;
-  type: "Course" | "Certification" | "Practice Resource";
-  reason: string;
+export interface PlanResult {
+  days: number;
+  difficulty: Difficulty;
+  plan: LearningDay[];
+  projectedReadinessGain: number;
 }
 
-export interface PortfolioProject {
-  title: string;
-  description: string;
-  skillsDemonstrated: string[];
-}
-
-export interface AnalysisResult {
-  currentReadiness: number;
-  projectedReadiness: number;
-  summary: string;
-  opportunityCoverage: OpportunityCoverage;
-  commonSkills: string[];
-  matchedSkills: string[];
-  missingSkills: string[];
-  prioritySkills: PrioritySkill[];
-  learningRoadmap: RoadmapWeek[];
-  recommendedCourses: Course[];
-  portfolioProjects: PortfolioProject[];
-  resumeSuggestions: string[];
-  mentorStyleAdvice: string;
-}
-
-// ── Zod Schemas ──
+// ── Zod Schemas ──────────────────────────────────────────────────────────────
 
 export const selectedJobSchema = z.object({
   title: z.string().min(1),
@@ -89,53 +127,78 @@ export const selectedJobSchema = z.object({
 
 export const analyzeRequestSchema = z.object({
   profile: z.string().min(1),
-  selectedJobs: z.array(selectedJobSchema).min(2).max(5),
-  timeline: z.enum(["2 weeks", "4 weeks", "8 weeks"]),
+  selectedJobs: z.array(selectedJobSchema).min(1).max(5),
 });
 
-export const analysisResultSchema = z.object({
-  currentReadiness: z.number().min(0).max(100),
-  projectedReadiness: z.number().min(0).max(100),
-  summary: z.string(),
-  opportunityCoverage: z.object({
-    current: z.string(),
-    projected: z.string(),
-    explanation: z.string(),
-  }),
-  commonSkills: z.array(z.string()),
+export const parsedResumeSchema = z.object({
+  skills: z.array(z.string()),
+  experience: z.array(z.string()),
+  education: z.array(z.string()),
+  rawText: z.string(),
+});
+
+export const perJobScoreSchema = z.object({
+  title: z.string(),
+  company: z.string(),
+  score: z.number().min(0).max(100),
+  matchedCount: z.number(),
+  totalRequired: z.number(),
+});
+
+export const scoreResultSchema = z.object({
+  overallScore: z.number().min(0).max(100),
+  projectedScore: z.number().min(0).max(100),
   matchedSkills: z.array(z.string()),
   missingSkills: z.array(z.string()),
-  prioritySkills: z.array(
-    z.object({
-      skill: z.string(),
-      priority: z.enum(["High", "Medium", "Low"]),
-      appearsIn: z.string(),
-      reason: z.string(),
-      recommendedAction: z.string(),
-    })
-  ),
-  learningRoadmap: z.array(
-    z.object({
-      week: z.string(),
-      focus: z.string(),
-      tasks: z.array(z.string()),
-      proofOfWork: z.string(),
-    })
-  ),
-  recommendedCourses: z.array(
-    z.object({
-      name: z.string(),
-      type: z.enum(["Course", "Certification", "Practice Resource"]),
-      reason: z.string(),
-    })
-  ),
-  portfolioProjects: z.array(
-    z.object({
-      title: z.string(),
-      description: z.string(),
-      skillsDemonstrated: z.array(z.string()),
-    })
-  ),
-  resumeSuggestions: z.array(z.string()),
-  mentorStyleAdvice: z.string(),
+  perJob: z.array(perJobScoreSchema),
+  summary: z.string(),
 });
+
+export const gapSchema = z.object({
+  item: z.string(),
+  category: z.enum(["skill", "cert", "experience", "tooling"]),
+  importance: z.enum(["critical", "nice-to-have"]),
+  appearsIn: z.string(),
+  reason: z.string(),
+});
+
+export const gapsResultSchema = z.object({
+  gaps: z.array(gapSchema),
+  summary: z.string(),
+});
+
+export const clusteredSkillSchema = z.object({
+  skill: z.string(),
+  appearsIn: z.string(),
+  rationale: z.string(),
+  category: z.enum(["skill", "cert", "experience", "tooling"]),
+});
+
+export const focusResultSchema = z.object({
+  clusteredSkills: z.array(clusteredSkillSchema),
+});
+
+export const learningResourceSchema = z.object({
+  title: z.string(),
+  url: z.string(),
+  type: z.enum(["video", "article", "course", "practice", "project"]),
+  estimatedMinutes: z.number(),
+});
+
+export const learningDaySchema = z.object({
+  day: z.number(),
+  topic: z.string(),
+  tasks: z.array(z.string()),
+  resources: z.array(learningResourceSchema),
+  proofOfWork: z.string(),
+});
+
+export const planResultSchema = z.object({
+  days: z.number(),
+  difficulty: z.enum(["beginner", "intermediate", "advanced"]),
+  plan: z.array(learningDaySchema),
+  projectedReadinessGain: z.number(),
+});
+
+export const daysSchema = z.union([z.literal(7), z.literal(14), z.literal(28)]);
+export const difficultySchema = z.enum(["beginner", "intermediate", "advanced"]);

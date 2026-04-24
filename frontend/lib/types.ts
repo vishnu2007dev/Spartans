@@ -1,3 +1,10 @@
+// ── Primitives ──────────────────────────────────────────────────────────────
+
+export type Days = 7 | 14 | 28;
+export type Difficulty = "beginner" | "intermediate" | "advanced";
+
+// ── Shared job types ─────────────────────────────────────────────────────────
+
 export interface Job {
   id: string;
   title: string;
@@ -17,59 +24,92 @@ export interface SelectedJob {
   requiredSkills: string[];
 }
 
-export type Timeline = "2 weeks" | "4 weeks" | "8 weeks";
+// ── Step 1 — Resume parsing ──────────────────────────────────────────────────
+
+export interface ParsedResume {
+  skills: string[];
+  experience: string[];
+  education: string[];
+  rawText: string;
+}
+
+// ── Step 2 — Job input ───────────────────────────────────────────────────────
 
 export interface AnalyzeRequest {
   profile: string;
   selectedJobs: SelectedJob[];
-  timeline: Timeline;
 }
 
-export interface OpportunityCoverage {
-  current: string;
-  projected: string;
-  explanation: string;
+// ── Step 3 — Score ───────────────────────────────────────────────────────────
+
+export interface PerJobScore {
+  title: string;
+  company: string;
+  score: number;
+  matchedCount: number;
+  totalRequired: number;
 }
 
-export interface PrioritySkill {
-  skill: string;
-  priority: "High" | "Medium" | "Low";
+export interface ScoreResult {
+  overallScore: number;
+  projectedScore: number;
+  matchedSkills: string[];
+  missingSkills: string[];
+  perJob: PerJobScore[];
+  summary: string;
+}
+
+// ── Step 4 — Gaps ────────────────────────────────────────────────────────────
+
+export type GapCategory = "skill" | "cert" | "experience" | "tooling";
+export type GapImportance = "critical" | "nice-to-have";
+
+export interface Gap {
+  item: string;
+  category: GapCategory;
+  importance: GapImportance;
   appearsIn: string;
   reason: string;
-  recommendedAction: string;
 }
 
-export interface RoadmapWeek {
-  week: string;
-  focus: string;
+export interface GapsResult {
+  gaps: Gap[];
+  summary: string;
+}
+
+// ── Step 5 — Skill focus ─────────────────────────────────────────────────────
+
+export interface ClusteredSkill {
+  skill: string;
+  appearsIn: string;
+  rationale: string;
+  category: GapCategory;
+}
+
+export interface FocusResult {
+  clusteredSkills: ClusteredSkill[];
+}
+
+// ── Step 6 — Learning path ───────────────────────────────────────────────────
+
+export interface LearningResource {
+  title: string;
+  url: string;
+  type: "video" | "article" | "course" | "practice" | "project";
+  estimatedMinutes: number;
+}
+
+export interface LearningDay {
+  day: number;
+  topic: string;
   tasks: string[];
+  resources: LearningResource[];
   proofOfWork: string;
 }
 
-export interface Course {
-  name: string;
-  type: "Course" | "Certification" | "Practice Resource";
-  reason: string;
-}
-
-export interface PortfolioProject {
-  title: string;
-  description: string;
-  skillsDemonstrated: string[];
-}
-
-export interface AnalysisResult {
-  currentReadiness: number;
-  projectedReadiness: number;
-  summary: string;
-  opportunityCoverage: OpportunityCoverage;
-  commonSkills: string[];
-  matchedSkills: string[];
-  missingSkills: string[];
-  prioritySkills: PrioritySkill[];
-  learningRoadmap: RoadmapWeek[];
-  recommendedCourses: Course[];
-  portfolioProjects: PortfolioProject[];
-  resumeSuggestions: string[];
-  mentorStyleAdvice: string;
+export interface PlanResult {
+  days: number;
+  difficulty: Difficulty;
+  plan: LearningDay[];
+  projectedReadinessGain: number;
 }

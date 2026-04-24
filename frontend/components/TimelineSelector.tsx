@@ -1,17 +1,17 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import type { Timeline } from "@/lib/types";
+import type { Days } from "@/lib/types";
 
 interface TimelineSelectorProps {
-  value: Timeline;
-  onChange: (t: Timeline) => void;
+  value: Days;
+  onChange: (d: Days) => void;
 }
 
-const options: { value: Timeline; descriptor: string }[] = [
-  { value: "2 weeks", descriptor: "Quick sprint" },
-  { value: "4 weeks", descriptor: "Balanced pace" },
-  { value: "8 weeks", descriptor: "Deep dive" },
+const options: { value: Days; label: string; descriptor: string }[] = [
+  { value: 7,  label: "7 days",  descriptor: "Quick sprint" },
+  { value: 14, label: "14 days", descriptor: "Balanced pace" },
+  { value: 28, label: "28 days", descriptor: "Deep dive" },
 ];
 
 export function TimelineSelector({ value, onChange }: TimelineSelectorProps) {
@@ -21,14 +21,10 @@ export function TimelineSelector({ value, onChange }: TimelineSelectorProps) {
         className="font-mono text-xs uppercase tracking-widest"
         style={{ color: "var(--text-dim)" }}
       >
-        Preparation Timeline
+        Plan Length
       </span>
 
-      <div
-        role="radiogroup"
-        aria-label="Preparation Timeline"
-        className="flex flex-wrap gap-3"
-      >
+      <div role="radiogroup" aria-label="Plan Length" className="flex flex-wrap gap-3">
         {options.map((opt) => {
           const selected = value === opt.value;
           return (
@@ -40,15 +36,13 @@ export function TimelineSelector({ value, onChange }: TimelineSelectorProps) {
               className={cn("flex-1 rounded-xl p-4 flex flex-col gap-1 text-left transition-all")}
               style={{
                 backgroundColor: selected ? "var(--accent-soft)" : "var(--bg-elev)",
-                border: selected
-                  ? "1px solid var(--accent)"
-                  : "1px solid var(--border)",
+                border: selected ? "1px solid var(--accent)" : "1px solid var(--border)",
                 color: selected ? "var(--heading)" : "var(--text-muted)",
                 fontWeight: selected ? 700 : 400,
                 minWidth: "90px",
               }}
             >
-              <span className="text-sm">{opt.value}</span>
+              <span className="text-sm">{opt.label}</span>
               <span
                 className="font-mono text-[11px]"
                 style={{ color: selected ? "var(--heading-sub)" : "var(--text-dim)" }}

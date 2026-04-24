@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 
 /* ── Crosshair marker SVG ── */
-function Crosshair() {
+function Crosshair({ style }: { style?: React.CSSProperties }) {
   return (
     <svg
       width="12"
@@ -11,7 +11,7 @@ function Crosshair() {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
       className="absolute z-10 pointer-events-none"
-      style={{ color: "var(--border-strong)" }}
+      style={{ color: "var(--border-strong)", ...style }}
     >
       <line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" strokeWidth="1" />
       <line x1="0" y1="6" x2="12" y2="6" stroke="currentColor" strokeWidth="1" />

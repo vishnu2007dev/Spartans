@@ -1,0 +1,25 @@
+{
+  "name": "kiro_spark",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vishnu2007dev/Spartans.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vishnu2007dev/Spartans/issues"
+  },
+  "homepage": "https://github.com/vishnu2007dev/Spartans#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
