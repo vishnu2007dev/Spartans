@@ -198,55 +198,55 @@ The Unlockd platform is split into two independent projects — `frontend/` (Nex
 - [ ] 8. Checkpoint — Frontend pages and backend API wired together
   - Ensure frontend can call backend API successfully. Ensure all tests pass in both projects. Ask the user if questions arise.
 
-- [ ] 9. Frontend — Results Dashboard
-  - [ ] 9.1 Implement `ScoreCard` component in `frontend/components/ScoreCard.tsx`
+- [x] 9. Frontend — Results Dashboard
+  - [x] 9.1 Implement `ScoreCard` component in `frontend/components/ScoreCard.tsx`
     - Display percentage score (0–100) with current/projected variant styling
     - _Requirements: 10.1, 10.2_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 9.2 Implement `SkillList` component in `frontend/components/SkillList.tsx`
+  - [x] 9.2 Implement `SkillList` component in `frontend/components/SkillList.tsx`
     - Render a labeled list of skill tags with descriptive heading
     - _Requirements: 12.1, 12.2_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 9.3 Implement `PrioritySkillCard` component in `frontend/components/PrioritySkillCard.tsx`
+  - [x] 9.3 Implement `PrioritySkillCard` component in `frontend/components/PrioritySkillCard.tsx`
     - Display skill name, priority level, appearsIn, reason, recommendedAction
     - _Requirements: 13.1, 13.2_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 9.4 Implement `RoadmapTimeline` component in `frontend/components/RoadmapTimeline.tsx`
+  - [x] 9.4 Implement `RoadmapTimeline` component in `frontend/components/RoadmapTimeline.tsx`
     - Week-by-week timeline with week label, focus, tasks list, and proofOfWork
     - _Requirements: 14.1, 14.2, 14.3_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 9.5 Implement `CourseRecommendations` component in `frontend/components/CourseRecommendations.tsx`
+  - [x] 9.5 Implement `CourseRecommendations` component in `frontend/components/CourseRecommendations.tsx`
     - List of course/certification cards with name, type, and reason
     - _Requirements: 15.1, 15.2_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 9.6 Implement `ProjectRecommendations` component in `frontend/components/ProjectRecommendations.tsx`
+  - [x] 9.6 Implement `ProjectRecommendations` component in `frontend/components/ProjectRecommendations.tsx`
     - List of project idea cards with title, description, and skillsDemonstrated
     - _Requirements: 16.1, 16.2_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 9.7 Implement `ResumeSuggestions` component in `frontend/components/ResumeSuggestions.tsx`
+  - [x] 9.7 Implement `ResumeSuggestions` component in `frontend/components/ResumeSuggestions.tsx`
     - Ordered list of actionable resume tips
     - _Requirements: 17.1, 17.2_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 9.8 Implement `MentorAdvice` component in `frontend/components/MentorAdvice.tsx`
+  - [x] 9.8 Implement `MentorAdvice` component in `frontend/components/MentorAdvice.tsx`
     - Styled block quote for mentor advice text
     - _Requirements: 18.1_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 9.9 Implement `ResultsDashboard` container in `frontend/components/ResultsDashboard.tsx`
+  - [x] 9.9 Implement `ResultsDashboard` container in `frontend/components/ResultsDashboard.tsx`
     - Compose all result section components
     - Sort `prioritySkills` by priority level: High → Medium → Low
     - Use semantic HTML headings for section hierarchy
     - _Requirements: 10.1, 10.2, 10.3, 11.1, 11.2, 12.1, 12.2, 13.1, 13.2, 13.3, 14.1, 14.2, 15.1, 15.2, 16.1, 16.2, 17.1, 17.2, 18.1, 19.3_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 9.10 Implement Results page at `frontend/app/results/page.tsx`
+  - [x] 9.10 Implement Results page at `frontend/app/results/page.tsx`
     - Read analysis result from `AppContext`; redirect to `/analyze` if no result
     - Render `ResultsDashboard` with the result data
     - _Requirements: 10.1, 10.2, 10.3, 11.1, 11.2, 12.1, 12.2, 13.1, 13.2, 13.3, 14.1, 14.2, 14.3, 15.1, 15.2, 16.1, 16.2, 17.1, 17.2, 18.1, 19.1, 19.3_

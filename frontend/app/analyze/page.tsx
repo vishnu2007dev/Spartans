@@ -22,7 +22,10 @@ export default function AnalyzePage() {
 
   useEffect(() => {
     if (selectedJobs.length === 0) {
-      router.push("/jobs");
+      // Small delay so the page can render before redirecting
+      const t = setTimeout(() => router.push("/jobs"), 100);
+      return () => clearTimeout(t);
+    }
     }
   }, [selectedJobs, router]);
 
