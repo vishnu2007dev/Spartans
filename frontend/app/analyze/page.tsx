@@ -22,10 +22,8 @@ export default function AnalyzePage() {
 
   useEffect(() => {
     if (selectedJobs.length === 0) {
-      // Small delay so the page can render before redirecting
       const t = setTimeout(() => router.push("/jobs"), 100);
       return () => clearTimeout(t);
-    }
     }
   }, [selectedJobs, router]);
 
@@ -54,9 +52,12 @@ export default function AnalyzePage() {
       setResult(result);
       router.push("/results");
     } catch (err) {
-      setSubmitError(
-        err instanceof Error ? err.message : "Something went wrong. Please try again."
-      );
+      const msg = err instanceof Error ? err.message : "Something went wrong.";
+      if (msg.includes("Failed to fetch") || msg.includes("fetch")) {
+        setSubmitError("Cannot reach the backend. Make sure the server is running on port 3001.");
+      } else {
+        setSubmitError(msg);
+      }
     } finally {
       setLoading(false);
     }
