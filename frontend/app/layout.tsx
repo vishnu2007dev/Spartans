@@ -1,51 +1,45 @@
 import type { Metadata } from "next";
-import { Syne, DM_Sans } from "next/font/google";
-import { AppContextProvider } from "../lib/context";
+import { Manrope, JetBrains_Mono } from "next/font/google";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { AppContextProvider } from "@/lib/context";
 import "./globals.css";
 
-const syne = Syne({
-  variable: "--font-syne",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
   title: "Unlockd — Unlock your next opportunity",
-  description: "Personalized skill roadmaps for students entering the workforce.",
+  description:
+    "Pick the roles you want. Paste your profile. Get a personalized skill roadmap that tells you exactly what to learn — and in what order.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
-      className={`${syne.variable} ${dmSans.variable} h-full antialiased`}
-      style={{
-        "--color-navy": "#0A0F1E",
-        "--color-charcoal": "#111827",
-        "--color-teal": "#00D4AA",
-        "--color-amber": "#F59E0B",
-        "--color-offwhite": "#F0F4FF",
-      } as React.CSSProperties}
+      className={`${manrope.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
     >
-      <body
-        className="min-h-full flex flex-col"
-        style={{
-          backgroundColor: "var(--color-navy)",
-          color: "var(--color-offwhite)",
-          fontFamily: "var(--font-dm-sans), sans-serif",
-        }}
-      >
-        <AppContextProvider>{children}</AppContextProvider>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange={false}
+        >
+          <AppContextProvider>{children}</AppContextProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

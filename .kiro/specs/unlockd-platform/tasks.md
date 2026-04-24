@@ -259,8 +259,43 @@ The Unlockd platform is split into two independent projects — `frontend/` (Nex
     - **Property 10: Dashboard components render all data fields** — Generate valid `Job`, `PrioritySkill`, `RoadmapWeek`, `Course`, `PortfolioProject` objects, render through their components, assert all fields appear in output
     - **Validates: Requirements 3.2, 13.2, 14.2, 15.2, 16.2**
 
-- [ ] 10. Final checkpoint — Full integration
-  - Ensure all tests pass in both `frontend/` and `backend/`. Verify the full flow: Landing → Job Discovery → Analyze → Results. Ask the user if questions arise.
+- [ ] 10. Frontend — Skill Check (AI Quiz Section)
+  - [ ] 10.1 Implement `SkillCheckQuiz` component in `frontend/components/SkillCheckQuiz.tsx`
+    - Displayed after the full results dashboard (after MentorAdvice)
+    - AI asks 3–5 questions about the skills/projects in the user's roadmap
+    - Questions are generated from the `prioritySkills` and `learningRoadmap` in the `AnalysisResult`
+    - Each question is multiple choice (4 options); user selects an answer
+    - After all questions: show score (e.g. "3/5 correct"), brief feedback per question, and an encouraging summary
+    - Use mock questions for MVP (no extra API call needed); questions are derived from the mock data
+    - Style: clean card-per-question layout, green for correct, red for incorrect on reveal
+    - **Owner: Om (Frontend Lead)**
+
+  - [ ] 10.2 Wire `SkillCheckQuiz` into Results page at `frontend/app/results/page.tsx`
+    - Render below `ResultsDashboard`
+    - Only show after user has scrolled through the dashboard (or always show — MVP choice)
+    - **Owner: Om (Frontend Lead)**
+
+- [ ] 11. Frontend — Career Activity Card (GitHub-style shareable)
+  - [ ] 11.1 Implement `ActivityCard` component in `frontend/components/ActivityCard.tsx`
+    - GitHub contribution graph-style heatmap grid showing simulated platform activity
+    - Grid: 12 weeks × 7 days of cells; cells colored by activity intensity (4 shades of green + empty)
+    - Activity data is derived from the roadmap weeks (mock/simulated for MVP)
+    - Above the grid: user's name placeholder, readiness score badge, top skill badge
+    - Below the grid: 3 stat pills — "X skills unlocked", "Y-week roadmap", "Z roles targeted"
+    - Tagline at bottom: "Prepared on Unlockd · unlockd.app"
+    - Designed to be screenshot-able and shareable on LinkedIn/Twitter
+    - Use a fixed card size (e.g. 600×300px) so it looks good as a social image
+    - **Owner: Om (Frontend Lead)**
+
+  - [ ] 11.2 Add share section to Results page
+    - Below `SkillCheckQuiz`, add a "Share your progress" section
+    - Render `ActivityCard` in a centered container
+    - Add a "Copy image" or "Download card" button (can be a simple screenshot hint for MVP)
+    - Add social share copy: "I just mapped my career path on Unlockd. Here's my readiness score 🚀"
+    - **Owner: Om (Frontend Lead)**
+
+- [ ] 12. Final checkpoint — Full integration
+  - Ensure all tests pass in both `frontend/` and `backend/`. Verify the full flow: Landing → Job Discovery → Analyze → Results → Skill Check → Share Card. Ask the user if questions arise.
 
 ## Notes
 

@@ -1,26 +1,112 @@
 @import "tailwindcss";
 
+/* ── Unlockd Design Tokens ── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light mode — white bg, black body, green headings */
+  --bg: #ffffff;
+  --bg-elev: #f5f5f5;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.14);
+  --text: #0a0a0a;           /* body / UI text */
+  --text-muted: #4a4a4a;     /* secondary body */
+  --text-dim: #737373;       /* labels, metadata */
+  --heading: #1a7a4a;        /* headings — deep forest green */
+  --heading-sub: #2d9e63;    /* subheadings — mid green */
+  --action: #22c55e;         /* action words, CTAs — bright green */
+  --accent: #16a34a;         /* accent — solid green */
+  --accent-soft: rgba(22, 163, 74, 0.08);
+  --grid-line: rgba(0, 0, 0, 0.04);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  /* Dark mode — black bg, white body, green headings */
+  --bg: #000000;
+  --bg-elev: #0a0a0a;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text: #f5f5f5;           /* body / UI text */
+  --text-muted: #a3a3a3;     /* secondary body */
+  --text-dim: #6b6b6b;       /* labels, metadata */
+  --heading: #4ade80;        /* headings — bright mint green */
+  --heading-sub: #86efac;    /* subheadings — soft green */
+  --action: #22c55e;         /* action words, CTAs */
+  --accent: #22c55e;         /* accent */
+  --accent-soft: rgba(34, 197, 94, 0.1);
+  --grid-line: rgba(255, 255, 255, 0.04);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Global resets ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html:not(.dark) {
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-manrope), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Smooth theme transitions */
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+/* Apply smooth transitions to all themed elements */
+*, *::before, *::after {
+  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+}
+
+/* ── Animations ── */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* ── Grid background pattern ── */
+.grid-bg {
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 120px 120px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+}
+
+.grid-bg-tight {
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 40%, transparent 100%);
 }
