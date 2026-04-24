@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import analyzeRouter from './routes/analyze';
 import jobsRouter from './routes/jobs';
+import parseResumeRouter from './routes/parseResume';
 import scoreRouter from './routes/score';
 import gapsRouter from './routes/gaps';
 import skillFocusRouter from './routes/skillFocus';
@@ -25,6 +26,7 @@ app.use(scoreRouter);
 app.use(gapsRouter);
 app.use(skillFocusRouter);
 app.use(learningPathRouter);
+app.use(parseResumeRouter);
 
 app.listen(PORT, () => {
   console.log(`Backend listening on http://localhost:${PORT}`);

@@ -19,7 +19,7 @@ export default function GapsPage() {
   useEffect(() => {
     if (gaps) return;
     if (!profileText || selectedJobs.length === 0) {
-      router.replace("/jobs");
+      router.replace("/onboarding");
       return;
     }
 
