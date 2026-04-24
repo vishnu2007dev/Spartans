@@ -92,6 +92,12 @@ body {
   animation: blink 1s step-end infinite;
 }
 
+/* ── Textarea placeholder ── */
+textarea::placeholder {
+  color: var(--text-dim);
+  opacity: 1;
+}
+
 /* ── Grid background pattern ── */
 .grid-bg {
   background-image:

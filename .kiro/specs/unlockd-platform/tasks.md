@@ -165,25 +165,25 @@ The Unlockd platform is split into two independent projects — `frontend/` (Nex
     - **Property 8: Selection counter accuracy** — Generate random select/deselect sequences, assert counter display matches actual selection count
     - **Validates: Requirement 3.5**
 
-- [ ] 7. Frontend — Analyze Page
-  - [ ] 7.1 Implement `ProfileInput` component in `frontend/components/ProfileInput.tsx`
+- [x] 7. Frontend — Analyze Page
+  - [x] 7.1 Implement `ProfileInput` component in `frontend/components/ProfileInput.tsx`
     - Textarea with visible label for profile text entry
     - Error display for validation messages
     - _Requirements: 2.1, 2.2, 19.2_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 7.2 Implement `TimelineSelector` component in `frontend/components/TimelineSelector.tsx`
+  - [x] 7.2 Implement `TimelineSelector` component in `frontend/components/TimelineSelector.tsx`
     - Three options: 2 weeks, 4 weeks, 8 weeks
     - Default to 4 weeks
     - _Requirements: 5.1, 5.2, 5.3_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 7.3 Implement `SelectedJobsSummary` component in `frontend/components/SelectedJobsSummary.tsx`
+  - [x] 7.3 Implement `SelectedJobsSummary` component in `frontend/components/SelectedJobsSummary.tsx`
     - Compact list of selected job titles and companies
     - _Requirements: 2.4_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 7.4 Implement Analyze page at `frontend/app/analyze/page.tsx`
+  - [x] 7.4 Implement Analyze page at `frontend/app/analyze/page.tsx`
     - Read selected jobs from `AppContext`; redirect to `/jobs` if none selected
     - Display `SelectedJobsSummary`, `ProfileInput`, `TimelineSelector`
     - Validate profile text is non-empty on submit
