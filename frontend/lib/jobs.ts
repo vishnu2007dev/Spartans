@@ -1,0 +1,124 @@
+import type { Job } from "./types";
+
+export const jobs: Job[] = [
+  {
+    id: "product-manager-intern-novatech",
+    title: "Product Manager Intern",
+    company: "NovaTech",
+    location: "Remote",
+    type: "Internship",
+    description:
+      "Work alongside senior PMs to define product requirements, run user research sessions, and track key metrics for NovaTech's SaaS platform. You'll own a feature end-to-end from discovery to launch. Ideal for students who think in systems and love talking to users.",
+    requiredSkills: ["Product thinking", "User research", "Data analysis", "Communication", "Roadmapping"],
+    preferredSkills: ["SQL", "Figma", "Agile/Scrum"],
+    category: "Product",
+  },
+  {
+    id: "data-analyst-intern-meridian",
+    title: "Data Analyst Intern",
+    company: "Meridian Analytics",
+    location: "New York, NY",
+    type: "Internship",
+    description:
+      "Join Meridian's analytics team to build dashboards, write SQL queries, and surface insights from large datasets for Fortune 500 clients. You'll present findings directly to stakeholders and iterate based on feedback. Strong SQL and visualization skills are essential.",
+    requiredSkills: ["SQL", "Data visualization", "Excel/Sheets", "Statistical analysis", "Communication"],
+    preferredSkills: ["Tableau", "Python", "Looker"],
+    category: "Data",
+  },
+  {
+    id: "business-analyst-intern-apex",
+    title: "Business Analyst Intern",
+    company: "Apex Consulting",
+    location: "Chicago, IL",
+    type: "Internship",
+    description:
+      "Support Apex's consulting engagements by gathering requirements, modeling business processes, and delivering data-backed recommendations to clients. You'll work in cross-functional teams and develop client-facing deliverables. Analytical rigor and clear communication are key.",
+    requiredSkills: ["Business analysis", "Data analysis", "Problem solving", "Communication", "Excel/Sheets"],
+    preferredSkills: ["SQL", "Process mapping", "PowerPoint"],
+    category: "Strategy",
+  },
+  {
+    id: "tpm-intern-vertex",
+    title: "Technical Program Manager Intern",
+    company: "Vertex Systems",
+    location: "Seattle, WA",
+    type: "Internship",
+    description:
+      "Coordinate cross-team engineering programs at Vertex, tracking milestones, managing dependencies, and unblocking engineers. You'll run standups, write program briefs, and report status to leadership. Comfort with technical concepts and strong organizational skills required.",
+    requiredSkills: ["Project management", "Communication", "Agile/Scrum", "Risk management", "Stakeholder management"],
+    preferredSkills: ["JIRA", "SQL", "Technical background"],
+    category: "Product",
+  },
+  {
+    id: "swe-intern-luminary",
+    title: "Software Engineer Intern",
+    company: "Luminary Labs",
+    location: "San Francisco, CA",
+    type: "Internship",
+    description:
+      "Build and ship production features on Luminary's consumer platform, working in a full-stack TypeScript codebase. You'll participate in code reviews, write tests, and collaborate with design and product. Strong CS fundamentals and at least one prior project are expected.",
+    requiredSkills: ["JavaScript/TypeScript", "React", "Data structures & algorithms", "Git", "Problem solving"],
+    preferredSkills: ["Node.js", "SQL", "System design basics"],
+    category: "Engineering",
+  },
+  {
+    id: "ops-analyst-intern-coreops",
+    title: "Operations Analyst Intern",
+    company: "CoreOps",
+    location: "Austin, TX",
+    type: "Internship",
+    description:
+      "Analyze operational workflows at CoreOps to identify inefficiencies and recommend process improvements. You'll build reporting tools, track KPIs, and work with ops managers to implement changes. Detail-oriented candidates with a data-first mindset will thrive here.",
+    requiredSkills: ["Data analysis", "Process improvement", "Excel/Sheets", "Communication", "Problem solving"],
+    preferredSkills: ["SQL", "Tableau", "Operations research"],
+    category: "Operations",
+  },
+  {
+    id: "ux-research-intern-designify",
+    title: "UX Research Intern",
+    company: "Designify",
+    location: "Remote",
+    type: "Internship",
+    description:
+      "Plan and conduct user interviews, usability tests, and surveys to inform product decisions at Designify. You'll synthesize findings into actionable insights and present to design and product teams. Empathy, curiosity, and strong written communication are must-haves.",
+    requiredSkills: ["User research", "Usability testing", "Communication", "Synthesis & analysis", "Figma"],
+    preferredSkills: ["Survey design", "Affinity mapping", "Quantitative research"],
+    category: "Design",
+  },
+  {
+    id: "growth-marketing-intern-scalr",
+    title: "Growth Marketing Analyst Intern",
+    company: "Scalr",
+    location: "New York, NY",
+    type: "Internship",
+    description:
+      "Support Scalr's growth team by analyzing campaign performance, running A/B tests, and building attribution dashboards. You'll work across paid, organic, and lifecycle channels to identify growth levers. Comfort with data and a bias for experimentation are essential.",
+    requiredSkills: ["Data analysis", "Marketing analytics", "A/B testing", "Excel/Sheets", "Communication"],
+    preferredSkills: ["SQL", "Google Analytics", "Looker"],
+    category: "Marketing",
+  },
+  {
+    id: "product-ops-intern-flowstate",
+    title: "Product Operations Intern",
+    company: "Flowstate",
+    location: "Remote",
+    type: "Internship",
+    description:
+      "Help Flowstate's product ops team scale internal processes, manage tooling, and track product health metrics. You'll bridge product, engineering, and customer success to ensure smooth launches and feedback loops. Organized, process-driven candidates preferred.",
+    requiredSkills: ["Product thinking", "Process improvement", "Data analysis", "Communication", "Project management"],
+    preferredSkills: ["SQL", "Notion/Confluence", "Agile/Scrum"],
+    category: "Operations",
+  },
+  {
+    id: "strategy-analytics-intern-pinnacle",
+    title: "Strategy & Analytics Intern",
+    company: "Pinnacle Group",
+    location: "Boston, MA",
+    type: "Internship",
+    description:
+      "Work on high-impact strategy projects at Pinnacle, combining market research, financial modeling, and data analysis to advise senior leadership. You'll build models in Excel, synthesize competitive intelligence, and present recommendations in polished decks.",
+    requiredSkills: ["Data analysis", "Financial modeling", "Excel/Sheets", "Communication", "Research"],
+    preferredSkills: ["SQL", "PowerPoint", "Python"],
+    category: "Strategy",
+  },
+];

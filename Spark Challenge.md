@@ -886,3 +886,226 @@ It makes career mentorship accessible to students who do not have mentors or ins
 
 A library of proven career pathways where students can share roadmaps that helped them become ready for specific roles.
 
+# Updated Product Flow — Unlockd
+
+**Browse jobs → select 2–5 roles → upload profile → get your personalized roadmap.**
+
+---
+
+## Why This Is Stronger
+
+Instead of asking users to paste random job descriptions, Unlockd already has jobs on the platform. That means users can:
+
+- Browse real-looking opportunities
+- Select 2–5 roles they care about
+- Compare their profile against those roles
+- Get one optimized learning path
+
+For MVP, your "job scraper" can be mocked/preloaded data. You do not need to build a real scraper in 8 hours.
+
+---
+
+## Updated Architecture
+
+```
+Job Scraper / Preloaded Jobs
+       ↓
+Jobs Database / Mock Jobs JSON
+       ↓
+Job Discovery Page
+       ↓
+User selects 2–5 jobs
+       ↓
+User uploads/pastes profile
+       ↓
+AI Gap Analysis Engine
+       ↓
+Learning Path Generator
+       ↓
+Unlockd Dashboard
+```
+
+---
+
+## MVP Version
+
+### 1. Job Browse Page
+
+Show 8–12 preloaded jobs as cards. Each card has:
+
+- Job title
+- Company
+- Location
+- Role type
+- Key skills
+- **Select** button
+
+**Example roles:**
+
+- Product Manager Intern
+- Data Analyst Intern
+- Business Analyst Intern
+- Technical Program Manager Intern
+- Software Engineer Intern
+- Operations Analyst Intern
+
+### 2. Selected Jobs Panel
+
+User selects 2–5 jobs. Show:
+
+- `3 jobs selected`
+- Button: **Analyze My Readiness**
+
+### 3. Profile Upload Page
+
+User pastes resume/profile text.
+
+**Optional:**
+
+- Upload resume file
+- Paste LinkedIn summary
+
+For MVP, paste text is enough.
+
+### 4. Results Dashboard
+
+Same outputs:
+
+- Current readiness
+- Projected readiness
+- Opportunity coverage
+- Common skills across selected jobs
+- Matched skills
+- Missing skills
+- Priority skills
+- Learning roadmap
+- Course/certification suggestions
+- Portfolio project ideas
+- Resume suggestions
+
+---
+
+## Updated System Architecture
+
+### Data Layer
+
+Use a local file: `/lib/jobs.ts`
+
+Each job object:
+
+```ts
+{
+  id: "pm-intern-1",
+  title: "Product Manager Intern",
+  company: "NovaTech",
+  location: "Remote",
+  type: "Internship",
+  description: "Work with engineering and design teams...",
+  requiredSkills: ["Product Metrics", "SQL", "User Research", "Roadmapping"],
+  preferredSkills: ["Figma", "A/B Testing", "Agile"],
+  category: "Product"
+}
+```
+
+### AI API Input Changes
+
+Instead of raw pasted job descriptions, send selected jobs:
+
+```json
+{
+  "profile": "User resume/profile text",
+  "selectedJobs": [
+    {
+      "title": "Product Manager Intern",
+      "company": "NovaTech",
+      "description": "...",
+      "requiredSkills": ["SQL", "Product Metrics"]
+    }
+  ],
+  "timeline": "4 weeks"
+}
+```
+
+---
+
+## Updated User Journey
+
+1. User lands on Unlockd
+2. User clicks **Find My Path**
+3. User browses available jobs
+4. User selects 2–5 jobs
+5. User pastes profile/resume
+6. Unlockd compares profile with selected jobs
+7. Unlockd generates optimized roadmap
+
+---
+
+## Why This Improves the Story
+
+**Before:** User brings job descriptions.
+
+**Now:** Unlockd helps students discover opportunities and prepare for them.
+
+That is a bigger platform.
+
+---
+
+## Updated One-Liner
+
+> Unlockd helps students select multiple opportunities from our job platform and generates one personalized roadmap to become ready for them.
+
+**Better version:**
+
+> Unlockd turns selected job opportunities into a personalized skill roadmap, helping students prepare strategically instead of applying blindly.
+
+---
+
+## Team Update Message
+
+> Slight product update: Instead of making users paste job descriptions manually, Unlockd will have a job discovery page with preloaded/scraped jobs. Users select 2–5 jobs they're interested in, upload or paste their current profile, and Unlockd compares them against those selected jobs to generate one optimized learning roadmap. For MVP, we can use mock/preloaded job data instead of building a full scraper. This makes the demo smoother and makes Unlockd feel more like a real platform.
+
+---
+
+## Builder Changes
+
+### Frontend Builder
+
+Add:
+
+- Job discovery page
+- Job cards
+- Select/deselect job logic
+- Selected jobs counter
+- Limit selection to 2–5 jobs
+
+### Backend Builder
+
+Change API from:
+
+```ts
+jobDescriptions: string[]
+```
+
+to:
+
+```ts
+selectedJobs: Job[]
+```
+
+### You
+
+Update story from:
+
+- *Students paste jobs they found*
+
+to:
+
+- *Students discover opportunities and Unlockd creates the preparation path*
+
+---
+
+## Pitch Upgrade
+
+> Most students don't know what jobs they're ready for or how to prepare for the ones they want. Unlockd starts with job discovery. Students select a few opportunities they care about, and our system reverse-engineers those jobs into one personalized learning path based on their current profile.
+
+This version is cleaner and more demo-friendly.

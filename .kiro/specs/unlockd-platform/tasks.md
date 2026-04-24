@@ -95,34 +95,34 @@ The Unlockd platform is split into two independent projects — `frontend/` (Nex
 - [ ] 3. Checkpoint — Backend core complete
   - Ensure all backend tests pass (`cd backend && npx vitest --run`), ask the user if questions arise.
 
-- [ ] 4. Frontend — App shell, context, and preloaded data
-  - [ ] 4.1 Create the `AppContext` provider in `frontend/lib/context.tsx`
+- [x] 4. Frontend — App shell, context, and preloaded data
+  - [x] 4.1 Create the `AppContext` provider in `frontend/lib/context.tsx`
     - Implement `AppContextProvider` wrapping the app in `frontend/app/layout.tsx`
     - Expose `selectedJobs`, `setSelectedJobs`, `result`, `setResult`
     - _Requirements: 3.8, 6.3_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 4.2 Create preloaded job data in `frontend/lib/jobs.ts`
+  - [x] 4.2 Create preloaded job data in `frontend/lib/jobs.ts`
     - Export an array of 8–12 `Job` objects with realistic student-oriented internship/entry-level roles
     - Include roles like Product Manager Intern, Data Analyst Intern, Business Analyst Intern, Technical Program Manager Intern, Software Engineer Intern, Operations Analyst Intern
     - _Requirements: 3.1, 3.3, 4.1, 4.2, 4.3_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 4.3 Create frontend mock data in `frontend/lib/mock-data.ts`
+  - [x] 4.3 Create frontend mock data in `frontend/lib/mock-data.ts`
     - Export a complete `AnalysisResult` object for UI development before the backend is ready
     - Include realistic sample values for all fields
     - _Requirements: 9.3_
     - **Owner: Om (Frontend Lead)**
 
-- [ ] 5. Frontend — Landing Page
-  - [ ] 5.1 Implement `LandingHero` component in `frontend/components/LandingHero.tsx`
+- [x] 5. Frontend — Landing Page
+  - [x] 5.1 Implement `LandingHero` component in `frontend/components/LandingHero.tsx`
     - Display product name "Unlockd", tagline, brief platform explanation
     - "Find My Path" CTA button linking to `/jobs`
     - Responsive layout (320px–1920px)
     - _Requirements: 1.1, 1.2, 1.3_
     - **Owner: Om (Frontend Lead)**
 
-  - [ ] 5.2 Implement Landing page at `frontend/app/page.tsx`
+  - [x] 5.2 Implement Landing page at `frontend/app/page.tsx`
     - Render `LandingHero` component
     - _Requirements: 1.1, 1.2, 1.3_
     - **Owner: Om (Frontend Lead)**
