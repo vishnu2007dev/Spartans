@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
+    "dev": "npx concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
     "dev:backend": "npm --prefix backend run dev",
     "dev:frontend": "npm --prefix frontend run dev"
   },
@@ -18,8 +18,5 @@
   "bugs": {
     "url": "https://github.com/vishnu2007dev/Spartans/issues"
   },
-  "homepage": "https://github.com/vishnu2007dev/Spartans#readme",
-  "devDependencies": {
-    "concurrently": "^9.2.1"
-  }
+  "homepage": "https://github.com/vishnu2007dev/Spartans#readme"
 }

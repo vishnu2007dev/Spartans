@@ -34,7 +34,7 @@ export function CTABand() {
 
         <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
           <Button size="lg" asChild>
-            <Link href="/jobs">
+            <Link href="/onboarding">
               Find my path <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
           </Button>

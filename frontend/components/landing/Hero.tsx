@@ -73,7 +73,7 @@ export function Hero() {
           style={{ animationDelay: "180ms" }}
         >
           <Button size="lg" asChild>
-            <Link href="/jobs">
+            <Link href="/onboarding">
               Find my path <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
           </Button>
