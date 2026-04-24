@@ -40,26 +40,26 @@ The Unlockd platform is split into two independent projects — `frontend/` (Nex
     - **Owner: Both**
 
 - [ ] 2. Backend — API route, validation, and AI integration
-  - [ ] 2.1 Implement request validation in `backend/src/lib/validation.ts`
+  - [x] 2.1 Implement request validation in `backend/src/lib/validation.ts`
     - Export a `validateRequest` function that parses the request body with `analyzeRequestSchema`
     - Return parsed data on success, or a structured error message on failure
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
     - **Owner: Vishnu (Backend Lead)**
 
-  - [ ]* 2.2 Write property tests for request validation (Properties 1 & 2)
+  - [x] 2.2 Write property tests for request validation (Properties 1 & 2)
     - Create `backend/__tests__/requestValidation.property.test.ts`
     - **Property 1: Valid requests are accepted** — Generate random valid `AnalyzeRequest` objects (non-empty profile, 2–5 selectedJobs with non-empty title/description, valid timeline) and assert `analyzeRequestSchema` parses successfully
     - **Validates: Requirement 7.1**
     - **Property 2: Invalid requests are rejected** — Generate invalid requests (empty profile, <2 or >5 selectedJobs, missing title/description, invalid timeline) and assert `analyzeRequestSchema` rejects
     - **Validates: Requirements 7.2, 7.3, 7.4, 7.5**
 
-  - [ ] 2.3 Implement mock data fallback in `backend/src/lib/mockResults.ts`
+  - [x] 2.3 Implement mock data fallback in `backend/src/lib/mockResults.ts`
     - Export a `getMockResults()` function returning a complete `AnalysisResult` object with realistic sample data
     - Include readiness scores, skill arrays, multi-week roadmap, courses, projects, resume suggestions, and mentor advice
     - _Requirements: 9.1, 9.2, 9.3_
     - **Owner: Vishnu (Backend Lead)**
 
-  - [ ] 2.4 Implement AI prompt builder in `backend/src/lib/aiPrompt.ts`
+  - [x] 2.4 Implement AI prompt builder in `backend/src/lib/aiPrompt.ts`
     - Export a `buildPrompt(profile, selectedJobs, timeline)` function that constructs the AI prompt
     - Include education guardrail instructions: focus on honest upskilling, avoid exaggerating experience, make recommendations actionable
     - Include instructions for `proofOfWork` items requiring tangible evidence of learning
@@ -68,7 +68,7 @@ The Unlockd platform is split into two independent projects — `frontend/` (Nex
     - _Requirements: 8.1, 21.1, 21.2, 21.3_
     - **Owner: Vishnu (Backend Lead)**
 
-  - [ ] 2.5 Implement the `/api/analyze` POST route in `backend/src/routes/analyze.ts`
+  - [x] 2.5 Implement the `/api/analyze` POST route in `backend/src/routes/analyze.ts`
     - Validate request body using `validateRequest`; return 400 with error message on failure
     - Call the AI API with the built prompt
     - Parse AI response through `analysisResultSchema`; if validation fails, return mock data
@@ -78,7 +78,7 @@ The Unlockd platform is split into two independent projects — `frontend/` (Nex
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 8.1, 8.2, 8.3, 9.1, 9.2, 20.1, 20.2, 20.3_
     - **Owner: Vishnu (Backend Lead)**
 
-  - [ ]* 2.6 Write property tests for AI response validation (Properties 3, 5, 6)
+  - [x]* 2.6 Write property tests for AI response validation (Properties 3, 5, 6)
     - Create `backend/__tests__/responseValidation.property.test.ts`
     - **Property 3: AI response parsing round-trip** — Generate valid `AnalysisResult` objects, serialize to JSON, parse through `analysisResultSchema`, assert equivalence
     - **Validates: Requirement 8.2**
@@ -87,7 +87,7 @@ The Unlockd platform is split into two independent projects — `frontend/` (Nex
     - **Property 6: Readiness score range enforcement** — Generate out-of-range numbers for `currentReadiness`/`projectedReadiness` and assert rejection
     - **Validates: Requirement 20.3**
 
-  - [ ]* 2.7 Write property test for mock data fallback (Property 4)
+  - [x]* 2.7 Write property test for mock data fallback (Property 4)
     - Create `backend/__tests__/mockFallback.property.test.ts`
     - **Property 4: Invalid AI response triggers mock data fallback** — Generate malformed JSON values, assert they fail `analysisResultSchema`, then assert `getMockResults()` passes `analysisResultSchema`
     - **Validates: Requirements 9.1, 9.2, 20.2**
