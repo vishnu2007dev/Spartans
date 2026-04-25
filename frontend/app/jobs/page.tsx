@@ -25,6 +25,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper";
+import { JobDetailsModal } from "@/components/JobDetailsModal";
 
 const MIN = 1;
 const MAX = 5;
@@ -45,10 +46,11 @@ function jsearchToJob(j: JSearchJob): Job {
     company: j.employer_name,
     location: [j.job_city, j.job_state, j.job_country].filter(Boolean).join(", "),
     type: j.job_employment_type,
-    description: j.job_description.slice(0, 400),
+    description: j.job_description,
     requiredSkills: j.job_required_skills ?? j.job_highlights?.Qualifications?.slice(0, 6) ?? [],
     preferredSkills: [],
     category: "Live",
+    url: j.job_apply_link || "",
   };
 }
 
@@ -62,6 +64,7 @@ export default function JobsPage() {
   const [error, setError] = useState("");
   const [searched, setSearched] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewingJob, setViewingJob] = useState<Job | null>(null);
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const maxReached = selectedIds.size >= MAX;
@@ -304,7 +307,13 @@ Final ranking: Organizing ${query}-related positions by match quality, location 
 
               {/* Grid View */}
               {viewMode === "grid" && (
-                <JobGrid jobs={jobs} selectedIds={selectedIds} onToggle={handleToggle} maxReached={maxReached} />
+                <JobGrid 
+                  jobs={jobs} 
+                  selectedIds={selectedIds} 
+                  onToggle={handleToggle} 
+                  maxReached={maxReached}
+                  onView={setViewingJob} 
+                />
               )}
 
               {/* List / Table View */}
@@ -345,7 +354,7 @@ Final ranking: Organizing ${query}-related positions by match quality, location 
                           cursor: isDisabled ? "not-allowed" : "pointer",
                           opacity: isDisabled ? 0.5 : 1,
                         }}
-                        onClick={() => !isDisabled && handleToggle(job.id)}
+                        onClick={() => setViewingJob(job)}
                       >
                         {/* Role */}
                         <div className="min-w-0 pr-4">
@@ -406,13 +415,17 @@ Final ranking: Organizing ${query}-related positions by match quality, location 
                         {/* Action */}
                         <div className="flex justify-end">
                           {isSelected ? (
-                            <span
-                              className="flex items-center gap-1 text-xs font-medium"
-                              style={{ color: "var(--heading)" }}
+                            <button
+                              className="flex items-center gap-1 text-xs font-medium transition-colors hover:opacity-80"
+                              style={{ color: "var(--accent)" }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleToggle(job.id);
+                              }}
                             >
                               <CheckCircle size={14} />
                               Selected
-                            </span>
+                            </button>
                           ) : (
                             <button
                               className="text-xs px-3 py-1 rounded-lg font-medium transition-colors"
@@ -450,6 +463,15 @@ Final ranking: Organizing ${query}-related positions by match quality, location 
       </main>
 
       <SelectionCounter count={selectedIds.size} min={MIN} max={MAX} />
+
+      {/* Job Details Modal */}
+      <JobDetailsModal
+        job={viewingJob}
+        onClose={() => setViewingJob(null)}
+        selected={viewingJob ? selectedIds.has(viewingJob.id) : false}
+        onToggle={() => viewingJob && handleToggle(viewingJob.id)}
+        disabled={maxReached}
+      />
     </div>
   );
 }

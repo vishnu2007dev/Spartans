@@ -15,6 +15,7 @@ export interface Job {
   requiredSkills: string[];
   preferredSkills: string[];
   category: string;
+  url: string;
 }
 
 export interface SelectedJob {

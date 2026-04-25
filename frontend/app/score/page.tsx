@@ -17,17 +17,18 @@ export default function ScorePage() {
 
   useEffect(() => {
     if (score) return;
-    if (!profileText || selectedJobs.length === 0) {
+    if (selectedJobs.length === 0) {
       router.replace("/onboarding");
       return;
     }
 
     async function fetchScore() {
       try {
+        const bodyProfile = profileText.trim() ? profileText : "No profile provided. Evaluate based on general expectations.";
         const res = await fetch(`${API_BASE}/api/score`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ profile: profileText, selectedJobs }),
+          body: JSON.stringify({ profile: bodyProfile, selectedJobs }),
         });
         if (!res.ok) throw new Error("Score fetch failed");
         const data: ScoreResult = await res.json();

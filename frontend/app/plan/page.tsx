@@ -22,14 +22,15 @@ export default function PlanPage() {
   const [error, setError] = useState("");
 
   async function handleGenerate() {
-    if (!profileText || chosenSkills.length === 0) return;
+    if (chosenSkills.length === 0) return;
     setLoading(true);
     setError("");
     try {
+      const bodyProfile = profileText.trim() ? profileText : "No profile provided. Evaluate based on general expectations.";
       const res = await fetch(`${API_BASE}/api/learning-path`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile: profileText, chosenSkills, days, difficulty }),
+        body: JSON.stringify({ profile: bodyProfile, chosenSkills, days, difficulty }),
       });
       if (!res.ok) throw new Error("Plan generation failed");
       const data: PlanResult = await res.json();
