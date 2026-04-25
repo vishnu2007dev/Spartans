@@ -113,3 +113,51 @@ export interface PlanResult {
   plan: LearningDay[];
   projectedReadinessGain: number;
 }
+
+// ── Plan task tests (Test Me) ─────────────────────────────────────────────────
+
+export interface MCQQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+}
+
+export interface VoiceQuestion {
+  id: string;
+  type: "scenario" | "interview";
+  question: string;
+  evaluationCriteria: string[];
+  sampleAnswer: string;
+}
+
+export interface TaskTestPayload {
+  taskTitle: string;
+  skill: string;
+  mcqQuestions: MCQQuestion[];
+  voiceQuestions: VoiceQuestion[];
+}
+
+export interface TaskTest extends TaskTestPayload {
+  taskId: string;
+}
+
+export interface TaskTestResultVoiceScore {
+  questionId: string;
+  score: number;
+  feedback: string;
+}
+
+export interface TaskTestResult {
+  taskId: string;
+  taskTitle: string;
+  skill: string;
+  mcqScore: number;
+  voiceScores: TaskTestResultVoiceScore[];
+  overallScore: number;
+  passed: boolean;
+  completedAt: number;
+}
+
+export type PlanProgress = Record<string, TaskTestResult>;

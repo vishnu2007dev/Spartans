@@ -8,6 +8,7 @@ import scoreRouter from './routes/score';
 import gapsRouter from './routes/gaps';
 import skillFocusRouter from './routes/skillFocus';
 import learningPathRouter from './routes/learningPath';
+import testRouter from './routes/test';
 import { config } from './config';
 
 const app = express();
@@ -27,6 +28,7 @@ app.use(gapsRouter);
 app.use(skillFocusRouter);
 app.use(learningPathRouter);
 app.use(parseResumeRouter);
+app.use('/api/test', testRouter);
 
 app.listen(PORT, () => {
   console.log(`Backend listening on http://localhost:${PORT}`);

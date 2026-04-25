@@ -5,21 +5,52 @@ import { Nav } from "@/components/landing/Nav";
 import { Button } from "@/components/ui/button";
 import { TimelineSelector } from "@/components/TimelineSelector";
 import { RoadmapTimeline } from "@/components/RoadmapTimeline";
+import { ProgressTracker } from "@/components/plan/ProgressTracker";
+import { TestModal } from "@/components/plan/TestModal";
+import { PlanShareCard } from "@/components/plan/PlanShareCard";
+import { motion } from "framer-motion";
 import { useAppContext } from "@/lib/context";
 import { API_BASE } from "@/lib/api";
 import type { PlanResult, Difficulty, Days } from "@/lib/types";
+import type { StartTestInput } from "@/hooks/useTaskTest";
 
 const DIFFICULTIES: { value: Difficulty; label: string; descriptor: string }[] = [
-  { value: "beginner",     label: "Beginner",     descriptor: "Foundational concepts" },
-  { value: "intermediate", label: "Intermediate",  descriptor: "Hands-on projects" },
-  { value: "advanced",     label: "Advanced",      descriptor: "Production-quality output" },
+  { value: "beginner", label: "Beginner", descriptor: "Foundational concepts" },
+  { value: "intermediate", label: "Intermediate", descriptor: "Hands-on projects" },
+  { value: "advanced", label: "Advanced", descriptor: "Production-quality output" },
 ];
 
 export default function PlanPage() {
-  const { profileText, chosenSkills, days, setDays, difficulty, setDifficulty, plan, setPlan } = useAppContext();
+  const {
+    profileText,
+    chosenSkills,
+    selectedJobs,
+    days,
+    setDays,
+    difficulty,
+    setDifficulty,
+    plan,
+    setPlan,
+    planProgress,
+  } = useAppContext();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [testOpen, setTestOpen] = useState(false);
+  const [testPayload, setTestPayload] = useState<StartTestInput | null>(null);
+
+  const targetRole =
+    selectedJobs.length > 0 ? selectedJobs.map((j) => j.title).join(", ") : "Software developer";
+
+  function openTest(p: StartTestInput) {
+    setTestPayload(p);
+    setTestOpen(true);
+  }
+
+  function closeTest() {
+    setTestOpen(false);
+    setTestPayload(null);
+  }
 
   async function handleGenerate() {
     if (!profileText || chosenSkills.length === 0) return;
@@ -44,24 +75,36 @@ export default function PlanPage() {
   return (
     <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh" }}>
       <Nav />
-      <main className="mx-auto max-w-[1280px] px-5 lg:px-8 py-16 pb-24">
-        <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: "var(--text-dim)" }}>
+      <main className="mx-auto max-w-[1280px] px-5 py-16 pb-24 lg:px-8">
+        <p
+          className="mb-3 font-mono text-xs uppercase tracking-widest"
+          style={{ color: "var(--text-dim)" }}
+        >
           Step 6 of 6
         </p>
-        <h1 className="text-4xl font-bold tracking-tight mb-3" style={{ color: "var(--heading)", fontFamily: "var(--font-manrope)", letterSpacing: "-0.03em" }}>
+        <h1
+          className="mb-3 text-4xl font-bold tracking-tight"
+          style={{
+            color: "var(--heading)",
+            fontFamily: "var(--font-manrope)",
+            letterSpacing: "-0.03em",
+          }}
+        >
           Your learning plan
         </h1>
-        <p className="text-base mb-10" style={{ color: "var(--text-muted)" }}>
+        <p className="mb-10 text-base" style={{ color: "var(--text-muted)" }}>
           Set your timeline and difficulty, then generate your day-by-day plan.
         </p>
 
         {!plan && (
-          <div className="flex flex-col gap-8 max-w-xl">
+          <div className="flex max-w-xl flex-col gap-8">
             <TimelineSelector value={days} onChange={(d: Days) => setDays(d)} />
 
-            {/* Difficulty selector */}
             <div className="flex flex-col gap-2">
-              <span className="font-mono text-xs uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>
+              <span
+                className="font-mono text-xs uppercase tracking-widest"
+                style={{ color: "var(--text-dim)" }}
+              >
                 Difficulty
               </span>
               <div role="radiogroup" aria-label="Difficulty" className="flex gap-3">
@@ -73,7 +116,7 @@ export default function PlanPage() {
                       role="radio"
                       aria-checked={selected}
                       onClick={() => setDifficulty(opt.value)}
-                      className="flex-1 rounded-xl p-4 flex flex-col gap-1 text-left transition-all"
+                      className="flex flex-1 flex-col gap-1 rounded-xl p-4 text-left transition-all"
                       style={{
                         backgroundColor: selected ? "var(--accent-soft)" : "var(--bg-elev)",
                         border: selected ? "1px solid var(--accent)" : "1px solid var(--border)",
@@ -82,7 +125,12 @@ export default function PlanPage() {
                       }}
                     >
                       <span className="text-sm">{opt.label}</span>
-                      <span className="font-mono text-[11px]" style={{ color: selected ? "var(--heading-sub)" : "var(--text-dim)" }}>
+                      <span
+                        className="font-mono text-[11px]"
+                        style={{
+                          color: selected ? "var(--heading-sub)" : "var(--text-dim)",
+                        }}
+                      >
                         {opt.descriptor}
                       </span>
                     </button>
@@ -91,21 +139,35 @@ export default function PlanPage() {
               </div>
             </div>
 
-            {/* Chosen skills summary */}
             <div className="flex flex-col gap-2">
-              <span className="font-mono text-xs uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>
+              <span
+                className="font-mono text-xs uppercase tracking-widest"
+                style={{ color: "var(--text-dim)" }}
+              >
                 Skills to learn
               </span>
               <div className="flex flex-wrap gap-2">
                 {chosenSkills.map((s) => (
-                  <span key={s} className="px-3 py-1 rounded-full text-sm font-mono" style={{ backgroundColor: "var(--accent-soft)", color: "var(--accent)", border: "1px solid var(--accent)" }}>
+                  <span
+                    key={s}
+                    className="rounded-full border px-3 py-1 font-mono text-sm"
+                    style={{
+                      backgroundColor: "var(--accent-soft)",
+                      color: "var(--accent)",
+                      borderColor: "var(--accent)",
+                    }}
+                  >
                     {s}
                   </span>
                 ))}
               </div>
             </div>
 
-            {error && <p className="text-sm" style={{ color: "#ef4444" }}>{error}</p>}
+            {error && (
+              <p className="text-sm" style={{ color: "#ef4444" }}>
+                {error}
+              </p>
+            )}
 
             <Button size="lg" onClick={handleGenerate} disabled={loading}>
               {loading ? "Generating your plan..." : "Generate my plan →"}
@@ -115,22 +177,52 @@ export default function PlanPage() {
 
         {plan && (
           <div className="flex flex-col gap-8">
-            <div className="flex items-center gap-6">
+            <div className="flex flex-wrap items-center gap-6">
               <div className="flex flex-col gap-1">
-                <span className="font-mono text-xs uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>Days</span>
-                <span className="text-2xl font-bold" style={{ color: "var(--heading)" }}>{plan.days}</span>
+                <span className="font-mono text-xs uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>
+                  Days
+                </span>
+                <span className="text-2xl font-bold" style={{ color: "var(--heading)" }}>
+                  {plan.days}
+                </span>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="font-mono text-xs uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>Difficulty</span>
-                <span className="text-2xl font-bold" style={{ color: "var(--heading)" }}>{plan.difficulty}</span>
+                <span className="font-mono text-xs uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>
+                  Difficulty
+                </span>
+                <span className="text-2xl font-bold" style={{ color: "var(--heading)" }}>
+                  {plan.difficulty}
+                </span>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="font-mono text-xs uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>Readiness gain</span>
-                <span className="text-2xl font-bold" style={{ color: "var(--accent)" }}>+{plan.projectedReadinessGain}%</span>
+                <span className="font-mono text-xs uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>
+                  Readiness gain
+                </span>
+                <span className="text-2xl font-bold" style={{ color: "var(--accent)" }}>
+                  +{plan.projectedReadinessGain}%
+                </span>
               </div>
             </div>
 
-            <RoadmapTimeline days={plan.plan} />
+            <ProgressTracker plan={plan} planProgress={planProgress} />
+
+            <RoadmapTimeline
+              days={plan.plan}
+              difficulty={plan.difficulty}
+              targetRole={targetRole}
+              totalDays={plan.days}
+              chosenSkills={chosenSkills}
+              planProgress={planProgress}
+              onOpenTest={openTest}
+            />
+
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7, duration: 0.4 }}
+            >
+              <PlanShareCard />
+            </motion.div>
 
             <Button variant="outline" onClick={() => setPlan(null)}>
               Regenerate with different settings
@@ -138,6 +230,8 @@ export default function PlanPage() {
           </div>
         )}
       </main>
+
+      <TestModal key={testPayload?.taskId ?? "closed"} open={testOpen} payload={testPayload} onClose={closeTest} />
     </div>
   );
 }

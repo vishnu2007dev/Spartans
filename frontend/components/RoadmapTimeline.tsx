@@ -1,18 +1,36 @@
-import type { LearningDay } from "@/lib/types";
+import type { Difficulty, LearningDay, PlanProgress } from "@/lib/types";
+import type { StartTestInput } from "@/hooks/useTaskTest";
+import { TeachingPromptCard } from "@/components/plan/TeachingPromptCard";
 
 interface RoadmapTimelineProps {
   days: LearningDay[];
+  difficulty: Difficulty;
+  targetRole: string;
+  totalDays: number;
+  chosenSkills: string[];
+  planProgress: PlanProgress;
+  onOpenTest: (payload: StartTestInput) => void;
 }
 
-export function RoadmapTimeline({ days }: RoadmapTimelineProps) {
+export function RoadmapTimeline({
+  days,
+  difficulty,
+  targetRole,
+  totalDays,
+  chosenSkills,
+  planProgress,
+  onOpenTest,
+}: RoadmapTimelineProps) {
+  const skillFor = (globalTaskIndex: number) =>
+    chosenSkills.length > 0 ? chosenSkills[globalTaskIndex % chosenSkills.length] : "General";
+
   return (
     <div className="flex flex-col gap-0">
       {days.map((entry, index) => (
         <div key={entry.day} className="flex gap-4">
-          {/* Left: circle + connector */}
           <div className="flex flex-col items-center" style={{ minWidth: 32 }}>
             <div
-              className="flex items-center justify-center rounded-full font-bold shrink-0"
+              className="flex shrink-0 items-center justify-center rounded-full font-bold"
               style={{
                 width: 32,
                 height: 32,
@@ -27,15 +45,14 @@ export function RoadmapTimeline({ days }: RoadmapTimelineProps) {
             </div>
             {index < days.length - 1 && (
               <div
-                className="flex-1 w-px my-1"
+                className="my-1 flex-1 w-px"
                 style={{ background: "var(--border)", minHeight: 24 }}
               />
             )}
           </div>
 
-          {/* Right: day card */}
           <div
-            className="rounded-xl p-5 flex flex-col gap-3 mb-4 flex-1"
+            className="mb-4 flex flex-1 flex-col gap-3 rounded-xl p-5"
             style={{ background: "var(--bg-elev)", border: "1px solid var(--border)" }}
           >
             <div className="flex flex-col gap-1">
@@ -50,25 +67,111 @@ export function RoadmapTimeline({ days }: RoadmapTimelineProps) {
               >
                 Day {entry.day}
               </span>
-              <span className="font-bold" style={{ color: "var(--heading)", fontSize: 16 }}>
+              <span className="text-base font-bold" style={{ color: "var(--heading)", fontSize: 16 }}>
                 {entry.topic}
               </span>
             </div>
 
-            {/* Tasks */}
-            <ul className="flex flex-col gap-1.5">
-              {entry.tasks.map((task, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <span
-                    className="mt-1.5 shrink-0 rounded-full"
-                    style={{ width: 6, height: 6, background: "var(--accent)", display: "inline-block" }}
-                  />
-                  <span style={{ color: "var(--text)", fontSize: 14 }}>{task}</span>
-                </li>
-              ))}
+            <ul className="flex flex-col gap-3">
+              {entry.tasks.map((task, i) => {
+                const taskId = `${entry.day}_${i}`;
+                const progress = planProgress[taskId];
+                const priorCount = days.slice(0, index).reduce((n, d) => n + d.tasks.length, 0);
+                const skill = skillFor(priorCount + i);
+                return (
+                  <li key={taskId} id={`plan-task-${taskId}`} className="flex flex-col gap-2">
+                    <div className="flex items-start gap-2">
+                      <span
+                        className="mt-1.5 inline-block size-1.5 shrink-0 rounded-full"
+                        style={{ background: "var(--accent)" }}
+                      />
+                      <span style={{ color: "var(--text)", fontSize: 14 }}>{task}</span>
+                    </div>
+                    <div className="pl-5">
+                      {progress?.passed ? (
+                        <span
+                          className="inline-flex rounded-full px-2.5 py-1 font-mono text-xs"
+                          style={{
+                            background: "rgba(34,197,94,0.15)",
+                            color: "#86efac",
+                            border: "1px solid rgba(34,197,94,0.35)",
+                          }}
+                        >
+                          ✅ Passed ({progress.overallScore}%)
+                        </span>
+                      ) : progress ? (
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span
+                            className="inline-flex rounded-full px-2.5 py-1 font-mono text-xs"
+                            style={{
+                              background: "rgba(234,179,8,0.12)",
+                              color: "#fbbf24",
+                              border: "1px solid rgba(234,179,8,0.35)",
+                            }}
+                          >
+                            ⚠️ Retry ({progress.overallScore}%)
+                          </span>
+                          <button
+                            type="button"
+                            className="rounded-md border px-2.5 py-1 font-mono text-xs transition-colors"
+                            style={{
+                              borderColor: "var(--border-strong)",
+                              color: "var(--text-muted)",
+                            }}
+                            onClick={() =>
+                              onOpenTest({
+                                taskId,
+                                taskTitle: task,
+                                taskDescription: task,
+                                skill,
+                                difficulty,
+                                targetRole,
+                                dayNumber: entry.day,
+                              })
+                            }
+                          >
+                            🧪 Test Me
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          className="rounded-md border px-2.5 py-1 font-mono text-xs transition-colors hover:bg-[var(--bg)]"
+                          style={{
+                            borderColor: "var(--border-strong)",
+                            color: "var(--text-muted)",
+                          }}
+                          onClick={() =>
+                            onOpenTest({
+                              taskId,
+                              taskTitle: task,
+                              taskDescription: task,
+                              skill,
+                              difficulty,
+                              targetRole,
+                              dayNumber: entry.day,
+                            })
+                          }
+                        >
+                          🧪 Test Me
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="pl-5">
+                      <TeachingPromptCard
+                        taskTitle={task}
+                        taskDescription={task}
+                        skill={skill}
+                        dayNumber={entry.day}
+                        totalDays={totalDays}
+                      />
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
 
-            {/* Resources */}
             {entry.resources.length > 0 && (
               <div className="flex flex-col gap-1.5">
                 <span
@@ -102,7 +205,6 @@ export function RoadmapTimeline({ days }: RoadmapTimelineProps) {
               </div>
             )}
 
-            {/* Proof of work */}
             <div className="flex flex-col gap-1">
               <span
                 style={{

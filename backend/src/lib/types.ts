@@ -116,6 +116,51 @@ export interface PlanResult {
   projectedReadinessGain: number;
 }
 
+// ── Plan task tests (Test Me) ───────────────────────────────────────────────
+
+export interface MCQQuestion {
+  id: string;
+  question: string;
+  options: [string, string, string, string];
+  correctIndex: number;
+  explanation: string;
+}
+
+export interface VoiceQuestion {
+  id: string;
+  type: "scenario" | "interview";
+  question: string;
+  evaluationCriteria: string[];
+  sampleAnswer: string;
+}
+
+/** API response shape — frontend attaches `taskId`. */
+export interface TaskTestPayload {
+  taskTitle: string;
+  skill: string;
+  mcqQuestions: MCQQuestion[];
+  voiceQuestions: VoiceQuestion[];
+}
+
+export interface TaskTestResultVoiceScore {
+  questionId: string;
+  score: number;
+  feedback: string;
+}
+
+export interface TaskTestResult {
+  taskId: string;
+  taskTitle: string;
+  skill: string;
+  mcqScore: number;
+  voiceScores: TaskTestResultVoiceScore[];
+  overallScore: number;
+  passed: boolean;
+  completedAt: number;
+}
+
+export type PlanProgress = Record<string, TaskTestResult>;
+
 // ── Zod Schemas ──────────────────────────────────────────────────────────────
 
 export const selectedJobSchema = z.object({
@@ -202,3 +247,49 @@ export const planResultSchema = z.object({
 
 export const daysSchema = z.union([z.literal(7), z.literal(14), z.literal(28)]);
 export const difficultySchema = z.enum(["beginner", "intermediate", "advanced"]);
+
+export const mcqQuestionSchema = z.object({
+  id: z.string(),
+  question: z.string(),
+  options: z.tuple([z.string(), z.string(), z.string(), z.string()]),
+  correctIndex: z.number().int().min(0).max(3),
+  explanation: z.string(),
+});
+
+export const voiceQuestionSchema = z.object({
+  id: z.string(),
+  type: z.enum(["scenario", "interview"]),
+  question: z.string(),
+  evaluationCriteria: z.array(z.string()),
+  sampleAnswer: z.string(),
+});
+
+export const taskTestGenerateRequestSchema = z.object({
+  taskTitle: z.string().min(1),
+  taskDescription: z.string(),
+  skill: z.string().min(1),
+  difficulty: difficultySchema,
+  targetRole: z.string().min(1),
+  dayNumber: z.number().int(),
+});
+
+export const taskTestGenerateResponseSchema = z.object({
+  taskTitle: z.string(),
+  skill: z.string(),
+  mcqQuestions: z.array(mcqQuestionSchema).length(3),
+  voiceQuestions: z.array(voiceQuestionSchema).length(2),
+});
+
+export const gradeVoiceRequestSchema = z.object({
+  question: z.string().min(1),
+  evaluationCriteria: z.array(z.string()),
+  userAnswer: z.string(),
+  skill: z.string().min(1),
+  difficulty: difficultySchema,
+});
+
+export const gradeVoiceResponseSchema = z.object({
+  score: z.number().min(1).max(5),
+  feedback: z.string(),
+  highlights: z.array(z.string()),
+});
