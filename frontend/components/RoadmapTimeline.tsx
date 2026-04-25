@@ -293,48 +293,35 @@ function DayItem({
               </div>
             </div>
 
-            {/* Bottom Row: Resources & Proof */}
-            <div className="grid sm:grid-cols-2 gap-8 mt-2">
-              {entry.resources.length > 0 && (
-                <div className="flex flex-col gap-3">
-                  <p className="text-[10px] font-mono uppercase tracking-widest font-bold text-[var(--text-dim)]">
-                    Curated Resources
-                  </p>
-                  <div className="flex flex-col gap-2">
-                    {entry.resources.map((r) => (
-                      <a
-                        key={r.url}
-                        href={r.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-between gap-3 group/link"
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <ExternalLink size={12} className="text-[var(--text-dim)]" />
-                          <span className="text-sm truncate text-[var(--text-muted)] group-hover/link:text-[var(--accent)] transition-colors">
-                            {r.title}
-                          </span>
-                        </div>
-                        <span className="text-[10px] font-mono text-[var(--text-dim)] shrink-0">
-                          {r.estimatedMinutes}m
-                        </span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-
+            {/* Resources */}
+            {entry.resources.length > 0 && (
               <div className="flex flex-col gap-3">
                 <p className="text-[10px] font-mono uppercase tracking-widest font-bold text-[var(--text-dim)]">
-                  Proof of Work
+                  Curated Resources
                 </p>
-                <div 
-                  className="text-sm leading-relaxed text-[var(--text-muted)] p-4 rounded-xl bg-[var(--bg-elev)] border border-[var(--border)]"
-                >
-                  {entry.proofOfWork}
+                <div className="flex flex-col gap-2">
+                  {entry.resources.map((r) => (
+                    <a
+                      key={r.url}
+                      href={r.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between gap-3 group/link"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <ExternalLink size={12} className="text-[var(--text-dim)]" />
+                        <span className="text-sm truncate text-[var(--text-muted)] group-hover/link:text-[var(--accent)] transition-colors">
+                          {r.title}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono text-[var(--text-dim)] shrink-0">
+                        {r.estimatedMinutes}m
+                      </span>
+                    </a>
+                  ))}
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>

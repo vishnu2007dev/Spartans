@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, ChevronUp, Sparkles } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, ClipboardCopy, Sparkles } from "lucide-react";
 import { useAppContext } from "@/lib/context";
 import { generateTeachingPrompt } from "@/lib/generateTeachingPrompt";
 import { launchWithPrompt, type AITarget } from "@/lib/launchAI";
@@ -169,57 +170,65 @@ export function TeachingPromptCard(props: {
                 <motion.button
                   type="button"
                   className={btnBase}
-                  style={{ background: "#10A37F", color: "#fff" }}
-                  whileHover={{ scale: 1.02, filter: "brightness(1.1)" }}
+                  style={{ background: "#fff", color: "#10A37F", border: "1.5px solid #10A37F" }}
+                  whileHover={{ scale: 1.02, background: "#f0fdf8" }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => openTarget("chatgpt")}
                 >
-                  <span className="inline-flex items-center gap-2">
-                    {OpenAiIcon}
-                    {chatgpt.state === "opening" ? "..." : "ChatGPT"}
+                  <span className="inline-flex items-center gap-2 font-semibold">
+                    <Image src="/chatgpt.png" alt="ChatGPT" width={18} height={18} className="rounded-sm" />
+                    {chatgpt.state === "opening" ? "Opening…" : "ChatGPT"}
                   </span>
                 </motion.button>
 
                 <motion.button
                   type="button"
                   className={btnBase}
-                  style={{ background: "#D97757", color: "#fff" }}
-                  whileHover={{ scale: 1.02, filter: "brightness(1.1)" }}
+                  style={{ background: "#fff", color: "#CC785C", border: "1.5px solid #CC785C" }}
+                  whileHover={{ scale: 1.02, background: "#fff8f5" }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => openTarget("claude")}
                 >
-                  <span className="inline-flex items-center gap-2">
-                    {ClaudeIcon}
-                    {claude.state === "opening" ? "..." : "Claude"}
+                  <span className="inline-flex items-center gap-2 font-semibold">
+                    <Image src="/claude.svg" alt="Claude" width={18} height={18} />
+                    {claude.state === "opening" ? "Opening…" : "Claude"}
                   </span>
                 </motion.button>
 
                 <motion.button
                   type="button"
                   className={btnBase}
-                  style={{ background: "#1B72E8", color: "#fff" }}
-                  whileHover={{ scale: 1.02, filter: "brightness(1.1)" }}
+                  style={{ background: "#fff", color: "#1B72E8", border: "1.5px solid #1B72E8" }}
+                  whileHover={{ scale: 1.02, background: "#f0f5ff" }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => openTarget("gemini")}
                 >
-                  <span className="inline-flex items-center gap-2">
-                    {GeminiIcon}
-                    {gemini.state === "opening" ? "..." : "Gemini"}
+                  <span className="inline-flex items-center gap-2 font-semibold">
+                    <Image src="/gemini.svg" alt="Gemini" width={18} height={18} />
+                    {gemini.state === "opening" ? "Opening…" : "Gemini"}
                   </span>
                 </motion.button>
               </div>
 
-              <div className="mt-3 flex items-center justify-between">
+              <div className="mt-3 flex items-center justify-between gap-3">
                 <button
                   type="button"
-                  className="text-[10px] font-mono font-bold tracking-widest text-[var(--accent)] hover:underline"
                   onClick={doCopy}
+                  className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-mono font-medium transition-all duration-150"
+                  style={{
+                    borderColor: copy.state === "success" ? "rgba(34,197,94,0.4)" : "var(--border-strong)",
+                    color: copy.state === "success" ? "#22c55e" : "var(--text-muted)",
+                    backgroundColor: copy.state === "success" ? "rgba(34,197,94,0.06)" : "transparent",
+                  }}
                 >
-                  {copy.state === "success" ? "✓ COPIED" : "📋 COPY PROMPT"}
+                  {copy.state === "success"
+                    ? <><Check size={12} strokeWidth={3} /> Copied</>
+                    : <><ClipboardCopy size={12} /> Copy prompt</>
+                  }
                 </button>
 
-                <span className="text-[10px] font-mono italic text-[var(--text-dim)]">
-                  Launch to start learning session
+                <span className="text-[10px] font-mono" style={{ color: "var(--text-dim)" }}>
+                  Opens in a new tab
                 </span>
               </div>
             </div>
