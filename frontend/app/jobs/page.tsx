@@ -151,35 +151,35 @@ export default function JobsPage() {
             </p>
           )}
 
-          {/* Search input — Claude-style prominent bar */}
+          {/* Search input — Claude-style with animated AI border */}
           <form
             onSubmit={handleSearch}
             className={`w-full transition-all duration-500 ${hasResults ? "max-w-3xl px-5" : "max-w-2xl px-5"}`}
           >
-            <div
-              className="relative flex items-center rounded-2xl shadow-sm transition-shadow hover:shadow-md focus-within:shadow-md"
-              style={{
-                backgroundColor: "var(--bg-elev)",
-                border: "1px solid var(--border)",
-              }}
-            >
-              <Search size={18} className="absolute left-4 text-gray-400" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search for any role, company, or location..."
-                className="w-full py-4 pl-11 pr-14 text-base bg-transparent rounded-2xl outline-none"
-                style={{ color: "var(--text)" }}
-              />
-              <button
-                type="submit"
-                disabled={loading || !query.trim()}
-                className="absolute right-2 w-9 h-9 rounded-xl flex items-center justify-center transition-colors disabled:opacity-30"
-                style={{ backgroundColor: query.trim() ? "var(--heading)" : "transparent" }}
+            <div className="ai-border-glow relative rounded-2xl p-[2px]">
+              {/* Input sits inside — white bg covers the center, gradient border shows through */}
+              <div
+                className="relative flex items-center rounded-[14px]"
+                style={{ backgroundColor: "var(--bg)" }}
               >
-                <ArrowUp size={18} className={query.trim() ? "text-white" : "text-gray-400"} />
-              </button>
+                <Search size={18} className="absolute left-4 text-gray-400" />
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search for any role, company, or location..."
+                  className="w-full py-4 pl-11 pr-14 text-base bg-transparent rounded-[14px] outline-none"
+                  style={{ color: "var(--text)" }}
+                />
+                <button
+                  type="submit"
+                  disabled={loading || !query.trim()}
+                  className="absolute right-2 w-9 h-9 rounded-xl flex items-center justify-center transition-colors disabled:opacity-30"
+                  style={{ backgroundColor: query.trim() ? "var(--heading)" : "transparent" }}
+                >
+                  <ArrowUp size={18} className={query.trim() ? "text-white" : "text-gray-400"} />
+                </button>
+              </div>
             </div>
           </form>
 
