@@ -7,6 +7,7 @@ import { buildResumeParsePrompt } from "../lib/aiPrompt";
 import { getMockParsedResume } from "../lib/mockResults";
 import { parsedResumeSchema } from "../lib/types";
 import { config } from "../config";
+import { callOpenRouter, cleanJson } from "../lib/aiClient";
 
 const router = Router();
 
@@ -30,23 +31,6 @@ async function extractText(file: Express.Multer.File): Promise<string> {
   }
   const result = await mammoth.extractRawText({ buffer: file.buffer });
   return result.value;
-}
-
-async function callOpenRouter(prompt: string): Promise<string | null> {
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${config.openRouterApiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "openai/gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }],
-    }),
-  });
-  if (!res.ok) return null;
-  const data = await res.json() as any;
-  return data.choices?.[0]?.message?.content ?? null;
 }
 
 router.post("/api/parse-resume", upload.single("resume"), async (req: Request, res: Response) => {
@@ -78,23 +62,24 @@ router.post("/api/parse-resume", upload.single("resume"), async (req: Request, r
 
     // Ask GPT-4o-mini to extract structured fields
     const prompt = buildResumeParsePrompt(rawText, linkedinUrl);
-    const content = await callOpenRouter(prompt);
+    const rawContent = await callOpenRouter(prompt);
 
-    if (!content) {
+    if (!rawContent) {
       return res.status(200).json({ ...getMockParsedResume(), rawText });
     }
 
+    const content = cleanJson(rawContent);
     let aiResult: unknown;
     try {
-      // Strip markdown code fences if model wrapped the JSON
-      const cleaned = content.replace(/^```json\s*/i, "").replace(/```\s*$/, "").trim();
-      aiResult = JSON.parse(cleaned);
-    } catch {
+      aiResult = JSON.parse(content);
+    } catch (e) {
+      console.error("Parse resume JSON parse failed:", content);
       return res.status(200).json({ ...getMockParsedResume(), rawText });
     }
 
     const validated = parsedResumeSchema.safeParse(aiResult);
     if (!validated.success) {
+      console.error("Parse resume Zod validation failed:", validated.error.errors);
       return res.status(200).json({ ...getMockParsedResume(), rawText });
     }
 

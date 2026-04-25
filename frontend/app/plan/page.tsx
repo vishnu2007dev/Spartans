@@ -8,6 +8,7 @@ import { RoadmapTimeline } from "@/components/RoadmapTimeline";
 import { useAppContext } from "@/lib/context";
 import { API_BASE } from "@/lib/api";
 import type { PlanResult, Difficulty, Days } from "@/lib/types";
+import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper";
 
 const DIFFICULTIES: { value: Difficulty; label: string; descriptor: string }[] = [
   { value: "beginner",     label: "Beginner",     descriptor: "Foundational concepts" },
@@ -45,10 +46,10 @@ export default function PlanPage() {
   return (
     <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh" }}>
       <Nav />
-      <main className="mx-auto max-w-[1280px] px-5 lg:px-8 py-16 pb-24">
-        <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: "var(--text-dim)" }}>
-          Step 6 of 6
-        </p>
+      <main className="mx-auto max-w-[1280px] px-5 lg:px-8 py-12 pb-24">
+        <div className="w-full max-w-xl mb-10 mx-auto">
+          <OnboardingStepper currentStep={6} />
+        </div>
         <h1 className="text-4xl font-bold tracking-tight mb-3" style={{ color: "var(--heading)", fontFamily: "var(--font-manrope)", letterSpacing: "-0.03em" }}>
           Your learning plan
         </h1>

@@ -9,6 +9,7 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import { useAppContext } from "@/lib/context";
 import { API_BASE } from "@/lib/api";
 import type { ScoreResult } from "@/lib/types";
+import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper";
 
 export default function ScorePage() {
   const router = useRouter();
@@ -48,10 +49,11 @@ export default function ScorePage() {
   return (
     <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh" }}>
       <Nav />
-      <main className="mx-auto max-w-[1280px] px-5 lg:px-8 py-16">
-        <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: "var(--text-dim)" }}>
-          Step 3 of 6
-        </p>
+      <main className="mx-auto max-w-[1280px] px-5 lg:px-8 py-12">
+        <div className="w-full max-w-xl mb-12 mx-auto">
+          <OnboardingStepper currentStep={3} />
+        </div>
+
         <h1 className="text-4xl font-bold tracking-tight mb-8" style={{ color: "var(--heading)", fontFamily: "var(--font-manrope)", letterSpacing: "-0.03em" }}>
           Your readiness score
         </h1>

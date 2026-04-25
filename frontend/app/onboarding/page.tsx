@@ -116,6 +116,9 @@ export default function OnboardingPage() {
         {/* Full-width review area */}
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-3xl mx-auto px-8 py-10 pb-32">
+            <div className="w-full max-w-xl mb-12 mx-auto">
+              <OnboardingStepper currentStep={1} />
+            </div>
             <div className="mb-8">
               <h1
                 className="text-3xl font-bold tracking-tight mb-2"
@@ -187,9 +190,9 @@ export default function OnboardingPage() {
         {/* Left: Upload form */}
         <div className="w-full lg:w-[45%] flex flex-col p-8 lg:p-12 overflow-y-auto">
           <div className="max-w-md mx-auto w-full flex flex-col flex-1">
-            <p className="font-mono text-xs uppercase tracking-widest mb-4" style={{ color: "var(--text-dim)" }}>
-              Step 1 of 6
-            </p>
+            <div className="w-full max-w-xl mb-12 mx-auto">
+              <OnboardingStepper currentStep={1} />
+            </div>
             <h1
               className="text-4xl font-bold tracking-tight mb-3"
               style={{ color: "var(--heading)", fontFamily: "var(--font-manrope)", letterSpacing: "-0.03em" }}
