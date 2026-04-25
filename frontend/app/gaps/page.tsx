@@ -29,7 +29,7 @@ import {
 import { Nav } from "@/components/landing/Nav";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { GapCard } from "@/components/PrioritySkillCard";
+import { GapTable } from "@/components/PrioritySkillCard";
 import { useAppContext } from "@/lib/context";
 import { API_BASE } from "@/lib/api";
 import type { Gap, GapsResult } from "@/lib/types";
@@ -450,34 +450,26 @@ export default function GapsPage() {
             </section>
 
             {critical.length > 0 && (
-              <section className="space-y-5">
+              <section className="space-y-4">
                 <SectionHeader
                   title="Critical Gaps"
                   detail="High-emphasis blockers with the strongest effect on readiness and interview outcomes."
                   accent="#dc2626"
                   icon={AlertTriangle}
                 />
-                <div className="grid gap-4">
-                  {critical.map((gap) => (
-                    <GapCard key={gap.item} gap={gap} />
-                  ))}
-                </div>
+                <GapTable gaps={critical} />
               </section>
             )}
 
             {niceToHave.length > 0 && (
-              <section className="space-y-5">
+              <section className="space-y-4">
                 <SectionHeader
                   title="Nice to Have"
                   detail="Secondary improvements that sharpen your profile after the major blockers are covered."
                   accent="#ca8a04"
                   icon={Wrench}
                 />
-                <div className="grid gap-4 xl:grid-cols-2">
-                  {niceToHave.map((gap) => (
-                    <GapCard key={gap.item} gap={gap} />
-                  ))}
-                </div>
+                <GapTable gaps={niceToHave} />
               </section>
             )}
 

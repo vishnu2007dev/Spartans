@@ -1,11 +1,7 @@
 "use client";
 
-import { AlertTriangle, Award, BriefcaseBusiness, Gauge, Wrench } from "lucide-react";
+import { Award, BriefcaseBusiness, Gauge, Wrench } from "lucide-react";
 import type { Gap } from "@/lib/types";
-
-interface GapCardProps {
-  gap: Gap;
-}
 
 const categoryConfig: Record<
   Gap["category"],
@@ -18,7 +14,7 @@ const categoryConfig: Record<
     soft: "rgba(116, 57, 198, 0.1)",
   },
   cert: {
-    label: "Certification",
+    label: "Cert",
     icon: Award,
     accent: "#b45309",
     soft: "rgba(180, 83, 9, 0.1)",
@@ -39,21 +35,19 @@ const categoryConfig: Record<
 
 const importanceConfig: Record<
   Gap["importance"],
-  { label: string; accent: string; soft: string; stripe: string; progress: string }
+  { label: string; dot: string; progress: string; rowSoft: string }
 > = {
   critical: {
     label: "Critical",
-    accent: "#dc2626",
-    soft: "rgba(220, 38, 38, 0.08)",
-    stripe: "#dc2626",
+    dot: "#dc2626",
     progress: "#ef4444",
+    rowSoft: "rgba(220, 38, 38, 0.03)",
   },
   "nice-to-have": {
     label: "Nice to have",
-    accent: "#b45309",
-    soft: "rgba(180, 83, 9, 0.08)",
-    stripe: "#d97706",
+    dot: "#d97706",
     progress: "#f59e0b",
+    rowSoft: "transparent",
   },
 };
 
@@ -68,125 +62,129 @@ function parseAppearsIn(appearsIn: string) {
 function estimateCoverage(gap: Gap) {
   const { ratio } = parseAppearsIn(gap.appearsIn);
   const base = gap.importance === "critical" ? 42 : 64;
-  const categoryPenalty =
+  const penalty =
     gap.category === "experience" ? 10 :
     gap.category === "tooling" ? 7 :
     gap.category === "cert" ? 4 : 0;
-  return Math.max(8, Math.min(84, Math.round(base - ratio * 24 - categoryPenalty)));
+  return Math.max(8, Math.min(84, Math.round(base - ratio * 24 - penalty)));
 }
 
-function compactReason(reason: string) {
-  if (reason.length <= 140) return reason;
-  return `${reason.slice(0, 137).trimEnd()}...`;
-}
-
-export function GapCard({ gap }: GapCardProps) {
-  const category = categoryConfig[gap.category];
-  const importance = importanceConfig[gap.importance];
-  const CategoryIcon = category.icon;
-  const { impacted, total, ratio } = parseAppearsIn(gap.appearsIn);
+function GapRow({ gap, last }: { gap: Gap; last: boolean }) {
+  const cat = categoryConfig[gap.category];
+  const imp = importanceConfig[gap.importance];
+  const CatIcon = cat.icon;
+  const { impacted, total } = parseAppearsIn(gap.appearsIn);
   const coverage = estimateCoverage(gap);
 
   return (
-    <div
-      className="group rounded-xl border overflow-hidden transition-all duration-200 hover:-translate-y-px"
+    <tr
+      className="group transition-colors duration-100"
       style={{
-        borderColor: "var(--border)",
-        backgroundColor: "var(--bg)",
-        boxShadow: "0 2px 12px rgba(15, 23, 42, 0.04)",
+        borderBottom: last ? "none" : "1px solid var(--border)",
+        backgroundColor: imp.rowSoft,
       }}
+      onMouseEnter={e => (e.currentTarget.style.backgroundColor = "var(--bg-elev)")}
+      onMouseLeave={e => (e.currentTarget.style.backgroundColor = imp.rowSoft)}
     >
-      <div className="flex">
-        {/* Left importance stripe */}
-        <div className="w-[3px] shrink-0" style={{ backgroundColor: importance.stripe }} />
+      {/* Gap name */}
+      <td className="py-3.5 pl-4 pr-4" style={{ minWidth: 180 }}>
+        <span
+          className="text-sm font-medium"
+          style={{ color: "var(--heading)", fontFamily: "var(--font-manrope)" }}
+        >
+          {gap.item}
+        </span>
+      </td>
 
-        <div className="flex-1 p-5">
-          {/* Top row: icon + title + tags + jobs hit */}
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-start gap-3 min-w-0">
-              <div
-                className="flex size-9 shrink-0 items-center justify-center rounded-lg mt-0.5"
-                style={{ backgroundColor: category.soft, color: category.accent }}
-              >
-                <CategoryIcon size={15} />
-              </div>
+      {/* Category */}
+      <td className="py-3.5 pr-6" style={{ width: 120 }}>
+        <span
+          className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[10px] font-mono uppercase tracking-[0.14em]"
+          style={{ color: cat.accent, backgroundColor: cat.soft }}
+        >
+          <CatIcon size={10} />
+          {cat.label}
+        </span>
+      </td>
 
-              <div className="min-w-0">
-                <h3
-                  className="text-base font-semibold leading-snug"
-                  style={{ color: "var(--heading)", fontFamily: "var(--font-manrope)" }}
-                >
-                  {gap.item}
-                </h3>
-                <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                  <span
-                    className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-[0.18em]"
-                    style={{ color: importance.accent, backgroundColor: importance.soft }}
-                  >
-                    <AlertTriangle size={9} />
-                    {importance.label}
-                  </span>
-                  <span
-                    className="rounded-md px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-[0.18em]"
-                    style={{ color: category.accent, backgroundColor: category.soft }}
-                  >
-                    {category.label}
-                  </span>
-                </div>
-              </div>
-            </div>
+      {/* Reason */}
+      <td className="py-3.5 pr-6 text-xs leading-relaxed" style={{ color: "var(--text-muted)", maxWidth: 400 }}>
+        {gap.reason.length > 100 ? `${gap.reason.slice(0, 97).trimEnd()}…` : gap.reason}
+      </td>
 
-            {/* Jobs hit — clean, no box */}
-            <div className="shrink-0 text-right pl-2">
-              <div
-                className="text-[10px] font-mono uppercase tracking-[0.18em]"
-                style={{ color: "var(--text-dim)" }}
-              >
-                Jobs hit
-              </div>
-              <div
-                className="mt-0.5 text-xl font-bold leading-none"
-                style={{ color: "var(--heading)", fontFamily: "var(--font-manrope)" }}
-              >
-                {impacted}/{total}
-              </div>
-            </div>
-          </div>
+      {/* Roles hit */}
+      <td className="py-3.5 pr-6 text-center" style={{ width: 72 }}>
+        <span
+          className="text-sm font-semibold tabular-nums"
+          style={{ color: "var(--heading)", fontFamily: "var(--font-manrope)" }}
+        >
+          {impacted}/{total}
+        </span>
+      </td>
 
-          {/* Reason */}
-          <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>
-            {compactReason(gap.reason)}
-          </p>
-
-          {/* Footer: coverage bar */}
-          <div className="mt-4 pt-3.5" style={{ borderTop: "1px solid var(--border)" }}>
-            <div className="flex items-center justify-between mb-2">
-              <span
-                className="text-[10px] font-mono uppercase tracking-[0.18em]"
-                style={{ color: "var(--text-dim)" }}
-              >
-                Coverage
-              </span>
-              <span className="text-xs" style={{ color: "var(--text-muted)" }}>
-                <span className="font-semibold" style={{ color: "var(--text)" }}>{coverage}%</span>
-                {" · "}impacts {Math.round(ratio * 100)}% of selected roles
-              </span>
-            </div>
+      {/* Coverage bar */}
+      <td className="py-3.5 pr-4" style={{ width: 140 }}>
+        <div className="flex items-center gap-2">
+          <div
+            className="h-1 flex-1 rounded-full overflow-hidden"
+            style={{ backgroundColor: "var(--bg-elev)" }}
+          >
             <div
-              className="h-1 rounded-full overflow-hidden"
-              style={{ backgroundColor: "var(--bg-elev)" }}
-            >
-              <div
-                className="h-full rounded-full transition-all"
-                style={{
-                  width: `${coverage}%`,
-                  background: `linear-gradient(90deg, ${importance.progress}, ${category.accent})`,
-                }}
-              />
-            </div>
+              className="h-full rounded-full"
+              style={{
+                width: `${coverage}%`,
+                background: `linear-gradient(90deg, ${imp.progress}, ${cat.accent})`,
+              }}
+            />
           </div>
+          <span
+            className="shrink-0 text-[10px] font-mono tabular-nums"
+            style={{ color: "var(--text-dim)", minWidth: 28, textAlign: "right" }}
+          >
+            {coverage}%
+          </span>
         </div>
-      </div>
+      </td>
+    </tr>
+  );
+}
+
+export function GapTable({ gaps }: { gaps: Gap[] }) {
+  return (
+    <div
+      className="w-full overflow-hidden rounded-xl"
+      style={{ border: "1px solid var(--border)" }}
+    >
+      <table className="w-full border-collapse">
+        <thead>
+          <tr style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--bg-elev)" }}>
+            <th className="py-2.5 pl-4 pr-4 text-left text-[10px] font-mono uppercase tracking-[0.18em]" style={{ color: "var(--text-dim)" }}>
+              Gap
+            </th>
+            <th className="py-2.5 pr-6 text-left text-[10px] font-mono uppercase tracking-[0.18em]" style={{ color: "var(--text-dim)" }}>
+              Type
+            </th>
+            <th className="py-2.5 pr-6 text-left text-[10px] font-mono uppercase tracking-[0.18em]" style={{ color: "var(--text-dim)" }}>
+              Reason
+            </th>
+            <th className="py-2.5 pr-6 text-center text-[10px] font-mono uppercase tracking-[0.18em]" style={{ color: "var(--text-dim)" }}>
+              Roles
+            </th>
+            <th className="py-2.5 pr-4 text-left text-[10px] font-mono uppercase tracking-[0.18em]" style={{ color: "var(--text-dim)" }}>
+              Coverage
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {gaps.map((gap, i) => (
+            <GapRow key={gap.item} gap={gap} last={i === gaps.length - 1} />
+          ))}
+        </tbody>
+      </table>
     </div>
   );
+}
+
+export function GapCard({ gap }: { gap: Gap }) {
+  return <GapTable gaps={[gap]} />;
 }
