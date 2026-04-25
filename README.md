@@ -27,50 +27,108 @@ The current flow is a six-step funnel:
 6. `Plan`
    Generate a learning plan by timeline and difficulty, then track progress and open small "test me" flows.
 
-## Repo layout
+## Architecture
+
+Unlockd is structured as a small monorepo with two application boundaries and a thin root workspace:
+
+- `frontend/`: Next.js 16 App Router UI
+- `backend/`: Express + TypeScript API
+- repo root: dev scripts, docs, assets, and workspace metadata
+
+The system flow is:
+
+1. The user goes through the product funnel: onboarding -> jobs -> score -> gaps -> focus -> plan.
+2. The frontend stores working state in browser-backed app context.
+3. The frontend calls the backend for parsing, job search, scoring, gap analysis, skill focus, and roadmap generation.
+4. The backend validates requests, calls JSearch and OpenRouter, normalizes the results, and returns UI-ready payloads.
+5. If AI output fails validation, the backend can return mock/demo data with `_meta` explaining the fallback source.
+
+### Responsibility split
+
+- The frontend owns routing, UI composition, charts, modals, selection flows, and client-side state.
+- The backend owns environment config, external integrations, schema validation, AI prompts, parsing, and response shaping.
+- Third-party services are isolated behind the backend so the browser does not call OpenRouter or RapidAPI directly.
+
+## Project structure
 
 ```text
 .
-├─ frontend/   Next.js 16 app router UI
-├─ backend/    Express + TypeScript API
-├─ package.json
-└─ README.md
+|-- backend/
+|   |-- __tests__/                  Route, validation, fallback, and integration tests
+|   |-- src/
+|   |   |-- lib/                    Shared helpers, schemas, AI utilities, parsers, mock data
+|   |   |-- routes/                 Express handlers grouped by feature
+|   |   |-- config.ts               Runtime env/config loading
+|   |   `-- server.ts               API bootstrap and middleware setup
+|   |-- package.json
+|   |-- tsconfig.json
+|   |-- vitest.config.ts
+|   |-- README.md
+|   `-- SETUP.md
+|-- frontend/
+|   |-- app/                        Next.js App Router pages and layouts
+|   |-- components/                 Reusable UI and feature-specific components
+|   |-- hooks/                      Custom React hooks
+|   |-- lib/                        API clients, state helpers, utilities, shared types
+|   |-- public/                     Static images and brand assets
+|   |-- types/                      Ambient/frontend-only type declarations
+|   |-- AGENTS.md
+|   |-- components.json
+|   |-- eslint.config.mjs
+|   |-- next.config.ts
+|   |-- package.json
+|   |-- postcss.config.mjs
+|   |-- tsconfig.json
+|   |-- vitest.config.ts
+|   `-- vitest.setup.ts
+|-- .agents/                        Local Codex skills used in this workspace
+|-- .kiro/                          Kiro workspace metadata
+|-- .vscode/                        Editor configuration
+|-- package.json                    Root script entrypoints
+|-- package-lock.json
+|-- README.md
+|-- Spark Challenge.md              Project brief / challenge context
+|-- final_change.md                 Local implementation notes
+`-- skills-lock.json
 ```
 
-### Frontend
+### Frontend breakdown
 
-The frontend lives in `frontend/` and is a Next.js app using:
+The frontend lives in `frontend/` and is a Next.js app using React 19, Tailwind CSS v4, Recharts, `next-themes`, and browser-persisted state in [frontend/lib/context.tsx](C:/Users/Om/Desktop/Kiro_Spark/frontend/lib/context.tsx:1).
 
-- React 19
-- Tailwind CSS v4
-- Recharts for score/gap visualizations
-- `next-themes` for dark mode
-- localStorage-backed session state in [frontend/lib/context.tsx](C:/Users/Om/Desktop/Kiro_Spark/frontend/lib/context.tsx:1)
+Key folders:
+
+- `frontend/app/`: route-level pages such as `onboarding`, `jobs`, `score`, `gaps`, `focus`, `plan`, and `results`
+- `frontend/components/`: reusable UI split by product area, including `landing/`, `onboarding/`, `plan/`, `ui/`, and `reui/`
+- `frontend/lib/`: API calls, app context, job helpers, prompt helpers, plan sharing logic, and shared types
+- `frontend/hooks/`: client hooks used by interactive flows
+- `frontend/public/`: public static assets and provider logos
+- `frontend/types/`: package declaration shims such as `mammoth.d.ts`
 
 Important pages:
 
 - [frontend/app/page.tsx](C:/Users/Om/Desktop/Kiro_Spark/frontend/app/page.tsx:1): landing page
 - [frontend/app/onboarding/page.tsx](C:/Users/Om/Desktop/Kiro_Spark/frontend/app/onboarding/page.tsx:1): resume intake
-- [frontend/app/jobs/page.tsx](C:/Users/Om/Desktop/Kiro_Spark/frontend/app/jobs/page.tsx:1): role search + selection
-- [frontend/app/score/page.tsx](C:/Users/Om/Desktop/Kiro_Spark/frontend/app/score/page.tsx:1): readiness score
-- [frontend/app/gaps/page.tsx](C:/Users/Om/Desktop/Kiro_Spark/frontend/app/gaps/page.tsx:1): dashboard gap analysis
+- [frontend/app/jobs/page.tsx](C:/Users/Om/Desktop/Kiro_Spark/frontend/app/jobs/page.tsx:1): role search and selection
+- [frontend/app/score/page.tsx](C:/Users/Om/Desktop/Kiro_Spark/frontend/app/score/page.tsx:1): readiness scoring
+- [frontend/app/gaps/page.tsx](C:/Users/Om/Desktop/Kiro_Spark/frontend/app/gaps/page.tsx:1): gap analysis
 - [frontend/app/focus/page.tsx](C:/Users/Om/Desktop/Kiro_Spark/frontend/app/focus/page.tsx:1): skill prioritization
-- [frontend/app/plan/page.tsx](C:/Users/Om/Desktop/Kiro_Spark/frontend/app/plan/page.tsx:1): learning plan and testing UI
+- [frontend/app/plan/page.tsx](C:/Users/Om/Desktop/Kiro_Spark/frontend/app/plan/page.tsx:1): roadmap generation and testing UI
 
-### Backend
+### Backend breakdown
 
-The backend lives in `backend/` and is an Express API using:
+The backend lives in `backend/` and uses TypeScript, Express, Zod, OpenRouter, RapidAPI / JSearch, and the `pdf-parse` + `mammoth` + `multer` stack for resume parsing.
 
-- TypeScript
-- Zod for request/response validation
-- OpenRouter for AI generation
-- RapidAPI / JSearch for live job search
-- `pdf-parse`, `mammoth`, and `multer` for resume parsing
+Key folders:
+
+- `backend/src/routes/`: endpoint handlers such as `parseResume`, `jobs`, `analyze`, `score`, `gaps`, `skillFocus`, `learningPath`, and `test`
+- `backend/src/lib/`: prompt builders, API wrappers, response normalization, validation, mock fallbacks, and shared backend types
+- `backend/__tests__/`: Vitest coverage for request validation, route behavior, property tests, and integration flows
 
 Important backend files:
 
 - [backend/src/server.ts](C:/Users/Om/Desktop/Kiro_Spark/backend/src/server.ts:1): app bootstrap
-- [backend/src/config.ts](C:/Users/Om/Desktop/Kiro_Spark/backend/src/config.ts:1): env loading
+- [backend/src/config.ts](C:/Users/Om/Desktop/Kiro_Spark/backend/src/config.ts:1): environment loading
 - [backend/src/lib/aiPrompt.ts](C:/Users/Om/Desktop/Kiro_Spark/backend/src/lib/aiPrompt.ts:1): prompt builders
 - [backend/src/lib/openRouterChat.ts](C:/Users/Om/Desktop/Kiro_Spark/backend/src/lib/openRouterChat.ts:1): AI request helper
 - [backend/src/lib/normalizeAiEnums.ts](C:/Users/Om/Desktop/Kiro_Spark/backend/src/lib/normalizeAiEnums.ts:1): AI payload normalization
