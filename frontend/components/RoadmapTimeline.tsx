@@ -81,9 +81,9 @@ function StatusBadge({ status }: { status: DayStatus }) {
   );
 }
 
-// ── Day card ──────────────────────────────────────────────────────────────────
+// ── Day item ──────────────────────────────────────────────────────────────────
 
-function DayCard({
+function DayItem({
   entry,
   status,
   isLast,
@@ -113,44 +113,41 @@ function DayCard({
   const skillFor = (i: number) =>
     chosenSkills.length > 0 ? chosenSkills[(priorTaskCount + i) % chosenSkills.length] : "General";
 
-  const borderColor =
-    status === "completed"
-      ? "#22c55e"
-      : status === "current"
-      ? "#7439c6"
-      : "var(--border)";
-
   const dotBg =
     status === "completed"
       ? "#22c55e"
       : status === "current"
       ? "#7439c6"
-      : "var(--bg-elev)";
+      : "var(--bg)";
 
   const dotBorder =
-    status === "upcoming" ? "var(--border-strong)" : dotBg;
+    status === "completed" 
+      ? "#22c55e" 
+      : status === "current" 
+      ? "#7439c6" 
+      : "var(--border-strong)";
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-8 group">
       {/* Left connector */}
       <div className="flex flex-col items-center" style={{ minWidth: 32 }}>
         <div
-          className="flex size-8 shrink-0 items-center justify-center rounded-full"
+          className="flex size-10 shrink-0 items-center justify-center rounded-full transition-all duration-300"
           style={{
             backgroundColor: dotBg,
             border: `2px solid ${dotBorder}`,
-            color:
-              status === "upcoming" ? "var(--text-dim)" : "#fff",
+            color: status === "upcoming" ? "var(--text-dim)" : "#fff",
             zIndex: 1,
+            boxShadow: status === "current" ? "0 0 15px rgba(116,57,198,0.2)" : "none"
           }}
         >
           {status === "completed" ? (
-            <Check size={13} strokeWidth={3} />
+            <Check size={16} strokeWidth={3} />
           ) : (
             <span
               style={{
                 fontFamily: "var(--font-mono)",
-                fontSize: 10,
+                fontSize: 12,
                 fontWeight: 700,
               }}
             >
@@ -160,95 +157,78 @@ function DayCard({
         </div>
         {!isLast && (
           <div
-            className="my-1 w-px flex-1"
+            className="my-2 w-0.5 flex-1 transition-colors duration-300"
             style={{
-              background:
-                status === "completed"
-                  ? "rgba(34,197,94,0.35)"
+              background: status === "completed"
+                  ? "linear-gradient(180deg, #22c55e, #22c55e 50%, var(--border) 100%)"
+                  : status === "current"
+                  ? "linear-gradient(180deg, #7439c6, var(--border))"
                   : "var(--border)",
-              minHeight: 20,
+              minHeight: 40,
             }}
           />
         )}
       </div>
 
-      {/* Card */}
-      <div
-        className="mb-4 flex-1 overflow-hidden rounded-xl border transition-all duration-200"
-        style={{
-          borderColor,
-          borderLeftWidth: status === "current" ? 3 : 1,
-          backgroundColor: status === "completed" ? "var(--bg-elev)" : "var(--bg)",
-          opacity: status === "upcoming" ? 0.8 : 1,
-          boxShadow:
-            status === "current"
-              ? "0 2px 16px rgba(116,57,198,0.1)"
-              : "0 1px 4px rgba(15,23,42,0.04)",
-        }}
-      >
-        {/* Card header — always visible */}
+      {/* Content */}
+      <div className="flex-1 pb-12">
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="flex w-full items-center justify-between px-4 py-3 transition-colors"
-          style={{ textAlign: "left" }}
+          className="flex w-full items-start justify-between py-1 transition-colors text-left"
         >
-          <div className="flex min-w-0 flex-col gap-1">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
               <span
-                className="text-[10px] font-mono uppercase tracking-[0.18em]"
-                style={{ color: "var(--text-dim)" }}
+                className="text-[11px] font-mono uppercase tracking-[0.2em] font-bold"
+                style={{ color: status === "current" ? "#7439c6" : "var(--text-dim)" }}
               >
                 Day {entry.day}
               </span>
               <StatusBadge status={status} />
             </div>
-            <p
-              className="text-sm font-semibold leading-snug"
+            <h3
+              className="text-xl font-bold leading-tight"
               style={{
-                color: status === "completed" ? "var(--text-muted)" : "var(--heading)",
+                color: status === "completed" ? "var(--text-dim)" : "var(--heading)",
                 fontFamily: "var(--font-manrope)",
                 textDecoration: status === "completed" ? "line-through" : "none",
-                textDecorationColor: "rgba(34,197,94,0.5)",
+                textDecorationColor: "rgba(34,197,94,0.4)",
               }}
             >
               {entry.topic}
-            </p>
+            </h3>
           </div>
-          <div style={{ color: "var(--text-dim)", flexShrink: 0 }}>
-            {open ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+          <div className="mt-2 text-[var(--text-dim)] shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+            {open ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
           </div>
         </button>
 
-        {/* Expanded content */}
+        {/* Details */}
         {open && (
-          <div
-            className="flex flex-col gap-5 border-t px-4 pb-5 pt-4"
-            style={{ borderColor: "var(--border)" }}
-          >
+          <div className="mt-8 flex flex-col gap-8 animate-in fade-in slide-in-from-top-2 duration-300">
             {/* Tasks */}
-            <ul className="flex flex-col gap-3">
+            <div className="flex flex-col gap-4">
               {entry.tasks.map((task, i) => {
                 const tid = taskId(entry.day, i);
                 const progress = planProgress[tid];
                 const skill = skillFor(i);
 
                 return (
-                  <li key={tid} id={`plan-task-${tid}`} className="flex flex-col gap-2">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-2 min-w-0">
-                        <span
-                          className="mt-1.5 size-1.5 shrink-0 rounded-full"
+                  <div key={tid} className="flex flex-col gap-3">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-start gap-3 min-w-0">
+                        <div 
+                          className="mt-1.5 size-2 shrink-0 rounded-full"
                           style={{
-                            backgroundColor: progress?.passed
-                              ? "#22c55e"
-                              : "var(--accent)",
+                            backgroundColor: progress?.passed ? "#22c55e" : "var(--accent)",
+                            opacity: progress?.passed ? 0.6 : 1
                           }}
                         />
                         <span
-                          className="text-sm leading-relaxed"
+                          className="text-base leading-relaxed"
                           style={{
-                            color: progress?.passed ? "var(--text-muted)" : "var(--text)",
+                            color: progress?.passed ? "var(--text-dim)" : "var(--text)",
                             textDecoration: progress?.passed ? "line-through" : "none",
                           }}
                         >
@@ -256,26 +236,18 @@ function DayCard({
                         </span>
                       </div>
 
-                      {/* Test Me inline */}
                       {progress?.passed ? (
-                        <span
-                          className="shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-mono"
-                          style={{
-                            backgroundColor: "rgba(34,197,94,0.1)",
-                            color: "#22c55e",
-                            border: "1px solid rgba(34,197,94,0.3)",
-                          }}
-                        >
-                          <Check size={9} strokeWidth={3} /> {progress.overallScore}%
-                        </span>
+                        <div className="flex items-center gap-2 font-mono text-[10px] text-[#22c55e]">
+                          <Check size={12} strokeWidth={3} />
+                          <span>PASSED {progress.overallScore}%</span>
+                        </div>
                       ) : (
                         <button
                           type="button"
-                          className="shrink-0 inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-mono transition-colors"
+                          className="shrink-0 flex items-center gap-2 rounded-lg border px-3 py-1.5 text-[10px] font-mono font-bold transition-all hover:bg-[var(--accent-soft)]"
                           style={{
-                            borderColor: progress ? "rgba(234,179,8,0.4)" : "var(--border-strong)",
-                            color: progress ? "#fbbf24" : "var(--text-dim)",
-                            backgroundColor: progress ? "rgba(234,179,8,0.06)" : "transparent",
+                            borderColor: "var(--border-strong)",
+                            color: "var(--accent)",
                           }}
                           onClick={() =>
                             onOpenTest({
@@ -289,93 +261,79 @@ function DayCard({
                             })
                           }
                         >
-                          <FlaskConical size={9} />
-                          {progress ? `Retry (${progress.overallScore}%)` : "Test Me"}
+                          <FlaskConical size={12} />
+                          TEST SKILL
                         </button>
                       )}
                     </div>
-                  </li>
+                  </div>
                 );
               })}
-            </ul>
-
-            {/* Learn with AI — primary section */}
-            <div
-              className="rounded-xl overflow-hidden"
-              style={{ border: "1px solid var(--border)" }}
-            >
-              <div
-                className="flex items-center gap-2 px-3 py-2.5"
-                style={{ backgroundColor: "rgba(116,57,198,0.04)", borderBottom: "1px solid var(--border)" }}
-              >
-                <Sparkles size={13} style={{ color: "#7439c6" }} />
-                <span
-                  className="text-[11px] font-mono uppercase tracking-[0.16em]"
-                  style={{ color: "#7439c6" }}
-                >
-                  Learn with AI
-                </span>
-                <span className="ml-auto flex items-center gap-1 text-[10px] font-mono" style={{ color: "var(--text-dim)" }}>
-                  <Clock size={10} /> ~15 min
-                </span>
-              </div>
-              {entry.tasks.map((task, i) => (
-                <TeachingPromptCard
-                  key={i}
-                  taskTitle={task}
-                  taskDescription={task}
-                  skill={skillFor(i)}
-                  dayNumber={entry.day}
-                  totalDays={totalDays}
-                />
-              ))}
             </div>
 
-            {/* Resources */}
-            {entry.resources.length > 0 && (
+            {/* AI Lab */}
+            <div className="flex flex-col gap-4 pl-5 border-l-2 border-[var(--border)]">
+              <div className="flex items-center gap-2">
+                <Sparkles size={14} className="text-[var(--accent)]" />
+                <span className="text-[11px] font-mono uppercase tracking-widest font-bold text-[var(--accent)]">
+                  AI-Guided Learning
+                </span>
+              </div>
               <div className="flex flex-col gap-2">
-                <p
-                  className="text-[10px] font-mono uppercase tracking-[0.18em]"
-                  style={{ color: "var(--text-dim)" }}
-                >
-                  Resources
+                {entry.tasks.map((task, i) => (
+                  <TeachingPromptCard
+                    key={i}
+                    taskTitle={task}
+                    taskDescription={task}
+                    skill={skillFor(i)}
+                    dayNumber={entry.day}
+                    totalDays={totalDays}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Bottom Row: Resources & Proof */}
+            <div className="grid sm:grid-cols-2 gap-8 mt-2">
+              {entry.resources.length > 0 && (
+                <div className="flex flex-col gap-3">
+                  <p className="text-[10px] font-mono uppercase tracking-widest font-bold text-[var(--text-dim)]">
+                    Curated Resources
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {entry.resources.map((r) => (
+                      <a
+                        key={r.url}
+                        href={r.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between gap-3 group/link"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <ExternalLink size={12} className="text-[var(--text-dim)]" />
+                          <span className="text-sm truncate text-[var(--text-muted)] group-hover/link:text-[var(--accent)] transition-colors">
+                            {r.title}
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-mono text-[var(--text-dim)] shrink-0">
+                          {r.estimatedMinutes}m
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col gap-3">
+                <p className="text-[10px] font-mono uppercase tracking-widest font-bold text-[var(--text-dim)]">
+                  Proof of Work
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  {entry.resources.map((r) => (
-                    <a
-                      key={r.url}
-                      href={r.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs transition-colors hover:bg-[var(--bg-elev)]"
-                      style={{
-                        borderColor: "var(--border)",
-                        color: "var(--accent)",
-                      }}
-                    >
-                      <ExternalLink size={10} />
-                      {r.title}
-                      <span style={{ color: "var(--text-dim)" }}>{r.estimatedMinutes}m</span>
-                    </a>
-                  ))}
+                <div 
+                  className="text-sm leading-relaxed text-[var(--text-muted)] p-4 rounded-xl bg-[var(--bg-elev)] border border-[var(--border)]"
+                >
+                  {entry.proofOfWork}
                 </div>
               </div>
-            )}
-
-            {/* Proof of work */}
-            <div
-              className="rounded-lg border-l-2 pl-3 py-1"
-              style={{ borderColor: "var(--accent)" }}
-            >
-              <p
-                className="text-[10px] font-mono uppercase tracking-[0.16em] mb-1"
-                style={{ color: "var(--text-dim)" }}
-              >
-                Proof of work
-              </p>
-              <p className="text-xs leading-relaxed" style={{ color: "var(--text-muted)" }}>
-                {entry.proofOfWork}
-              </p>
             </div>
           </div>
         )}
@@ -388,14 +346,13 @@ function DayCard({
 
 function WeekLabel({ week }: { week: number }) {
   return (
-    <div className="flex items-center gap-3 mb-3 ml-10">
-      <p
-        className="text-[10px] font-mono uppercase tracking-[0.22em] shrink-0"
-        style={{ color: "var(--text-dim)" }}
+    <div className="flex items-center gap-4 mb-10">
+      <div 
+        className="size-10 shrink-0 flex items-center justify-center font-mono text-[10px] font-bold tracking-widest text-[var(--text-dim)]"
       >
-        Week {week}
-      </p>
-      <div className="flex-1 h-px" style={{ backgroundColor: "var(--border)" }} />
+        WK {week}
+      </div>
+      <div className="h-px flex-1 bg-gradient-to-r from-[var(--border-strong)] to-transparent" />
     </div>
   );
 }
@@ -417,14 +374,14 @@ export function RoadmapTimeline({
   let priorTaskCount = 0;
 
   return (
-    <div className="flex flex-col gap-0">
+    <div className="flex flex-col">
       {days.map((entry, index) => {
         const status = getDayStatus(entry, planProgress);
         const week = Math.ceil(entry.day / 7);
         const isWeekStart = showWeeks && entry.day % 7 === 1;
 
-        const card = (
-          <DayCard
+        const item = (
+          <DayItem
             key={entry.day}
             entry={entry}
             status={status}
@@ -445,7 +402,7 @@ export function RoadmapTimeline({
         return (
           <div key={entry.day}>
             {isWeekStart && <WeekLabel week={week} />}
-            {card}
+            {item}
           </div>
         );
       })}

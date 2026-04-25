@@ -477,39 +477,34 @@ export default function PlanPage() {
         {plan && (
           <div className="flex flex-col gap-8">
             {/* Plan summary banner */}
-            <div
-              className="rounded-xl border px-6 py-5"
-              style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)", boxShadow: "0 2px 12px rgba(15,23,42,0.04)" }}
-            >
-              <div className="flex flex-wrap items-center justify-between gap-6">
-                <div className="flex flex-wrap items-center gap-8">
-                  <div>
-                    <p className="text-[10px] font-mono uppercase tracking-[0.2em]" style={{ color: "var(--text-dim)" }}>Plan</p>
-                    <p className="mt-0.5 text-2xl font-bold" style={{ color: "var(--heading)", fontFamily: "var(--font-manrope)" }}>
-                      {plan.days} days
+            <div className="py-6 border-b border-[var(--border)]">
+              <div className="flex flex-wrap items-center justify-between gap-8">
+                <div className="flex flex-wrap items-center gap-12">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-[var(--text-dim)]">Timeline</p>
+                    <p className="text-3xl font-bold tracking-tight text-[var(--heading)]" style={{ fontFamily: "var(--font-manrope)" }}>
+                      {plan.days} Days
                     </p>
                   </div>
-                  <div className="h-7 w-px hidden sm:block" style={{ backgroundColor: "var(--border)" }} />
-                  <div>
-                    <p className="text-[10px] font-mono uppercase tracking-[0.2em]" style={{ color: "var(--text-dim)" }}>Difficulty</p>
-                    <p className="mt-0.5 text-2xl font-bold capitalize" style={{ color: "var(--heading)", fontFamily: "var(--font-manrope)" }}>
+                  <div className="flex flex-col gap-1">
+                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-[var(--text-dim)]">Expertise</p>
+                    <p className="text-3xl font-bold tracking-tight text-[var(--heading)] capitalize" style={{ fontFamily: "var(--font-manrope)" }}>
                       {plan.difficulty}
                     </p>
                   </div>
-                  <div className="h-7 w-px hidden sm:block" style={{ backgroundColor: "var(--border)" }} />
-                  <div>
-                    <p className="text-[10px] font-mono uppercase tracking-[0.2em]" style={{ color: "var(--text-dim)" }}>Readiness gain</p>
-                    <p className="mt-0.5 text-2xl font-bold" style={{ color: "#7439c6", fontFamily: "var(--font-manrope)" }}>
+                  <div className="flex flex-col gap-1">
+                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-[var(--text-dim)]">Impact</p>
+                    <p className="text-3xl font-bold tracking-tight text-[var(--accent)]" style={{ fontFamily: "var(--font-manrope)" }}>
                       +{plan.projectedReadinessGain}%
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setPlan(null)}
-                  className="text-xs font-mono px-3 py-1.5 rounded-lg border transition-colors hover:bg-[var(--bg-elev)]"
-                  style={{ borderColor: "var(--border)", color: "var(--text-dim)" }}
+                  className="group flex items-center gap-2 text-xs font-mono font-bold tracking-widest text-[var(--text-dim)] hover:text-[var(--accent)] transition-colors"
                 >
-                  Regenerate →
+                  <X size={14} className="group-hover:rotate-90 transition-transform" />
+                  RESET PLAN
                 </button>
               </div>
             </div>

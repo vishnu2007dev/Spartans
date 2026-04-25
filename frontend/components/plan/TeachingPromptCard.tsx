@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import { useAppContext } from "@/lib/context";
 import { generateTeachingPrompt } from "@/lib/generateTeachingPrompt";
 import { launchWithPrompt, type AITarget } from "@/lib/launchAI";
@@ -119,31 +120,25 @@ export function TeachingPromptCard(props: {
   }
 
   return (
-    <div
-      className="mt-3 overflow-hidden rounded-xl border"
-      style={{
-        borderColor: "var(--border)",
-        background: "color-mix(in srgb, var(--bg) 85%, var(--bg-elev))",
-      }}
-    >
+    <div className="mt-2 flex flex-col gap-2">
       <motion.button
         type="button"
-        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
-        style={{
-          borderTop: "1px solid var(--border)",
-          color: "var(--text-muted)",
-        }}
-        whileHover={{ filter: "brightness(1.05)" }}
-        whileTap={{ scale: 0.995 }}
+        className="flex w-full items-center gap-3 py-2 text-left group"
         onClick={() => setOpen((v) => !v)}
       >
-        <div className="flex items-center gap-2">
-          <span aria-hidden="true">✨</span>
-          <span className="text-sm">Learn this with AI</span>
+        <div 
+          className="size-8 rounded-lg flex items-center justify-center transition-colors group-hover:bg-[var(--accent-soft)]"
+          style={{ border: "1px solid var(--border)" }}
+        >
+          <Sparkles size={14} className="text-[var(--accent)]" />
         </div>
-        <span className="font-mono text-xs" style={{ color: "var(--text-dim)" }}>
-          {open ? "▲" : "▼"}
-        </span>
+        <div className="flex flex-col">
+          <span className="text-sm font-bold text-[var(--heading)]">Open Lab</span>
+          <span className="text-[10px] font-mono text-[var(--text-dim)] uppercase tracking-wider">AI Teaching Assistant</span>
+        </div>
+        <div className="ml-auto text-[var(--text-dim)] transition-transform duration-200" style={{ transform: open ? "rotate(180deg)" : "none" }}>
+          <ChevronDown size={14} />
+        </div>
       </motion.button>
 
       <AnimatePresence initial={false}>
@@ -154,40 +149,34 @@ export function TeachingPromptCard(props: {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.22 }}
           >
-            <div className="px-4 pb-4 pt-3">
-              <p
-                className="mb-2 font-mono text-[10px] uppercase tracking-widest"
-                style={{ color: "var(--text-dim)" }}
-              >
-                Your personalized teaching prompt
-              </p>
+            <div className="pl-11 pr-4 pb-6 pt-2">
               <div
-                className="rounded-lg border p-3 font-mono text-xs leading-relaxed"
+                className="rounded-xl border p-4 font-mono text-xs leading-relaxed mb-4"
                 style={{
                   borderColor: "var(--border)",
-                  background: "var(--bg)",
+                  background: "var(--bg-elev)",
                   color: "var(--text-muted)",
                   maxHeight: 160,
                   overflowY: "auto",
                   userSelect: "text",
-                  boxShadow: "inset 0 -18px 18px -18px rgba(0,0,0,0.35)",
+                  boxShadow: "inset 0 2px 10px rgba(0,0,0,0.02)",
                 }}
               >
                 {prompt}
               </div>
 
-              <div className="mt-3 flex flex-col gap-2 md:flex-row">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 <motion.button
                   type="button"
                   className={btnBase}
                   style={{ background: "#10A37F", color: "#fff" }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.02, filter: "brightness(1.1)" }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => openTarget("chatgpt")}
                 >
                   <span className="inline-flex items-center gap-2">
-                    <span style={{ color: "#fff" }}>{OpenAiIcon}</span>
-                    {chatgpt.state === "opening" ? "Opening... ↗" : "Open in ChatGPT"}
+                    {OpenAiIcon}
+                    {chatgpt.state === "opening" ? "..." : "ChatGPT"}
                   </span>
                 </motion.button>
 
@@ -195,13 +184,13 @@ export function TeachingPromptCard(props: {
                   type="button"
                   className={btnBase}
                   style={{ background: "#D97757", color: "#fff" }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.02, filter: "brightness(1.1)" }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => openTarget("claude")}
                 >
                   <span className="inline-flex items-center gap-2">
-                    <span style={{ color: "#fff" }}>{ClaudeIcon}</span>
-                    {claude.state === "opening" ? "Opening... ↗" : "Open in Claude"}
+                    {ClaudeIcon}
+                    {claude.state === "opening" ? "..." : "Claude"}
                   </span>
                 </motion.button>
 
@@ -209,56 +198,30 @@ export function TeachingPromptCard(props: {
                   type="button"
                   className={btnBase}
                   style={{ background: "#1B72E8", color: "#fff" }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.02, filter: "brightness(1.1)" }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => openTarget("gemini")}
                 >
                   <span className="inline-flex items-center gap-2">
-                    <span style={{ color: "#fff" }}>{GeminiIcon}</span>
-                    {gemini.state === "opening" ? "Opening... ↗" : "Open in Gemini"}
+                    {GeminiIcon}
+                    {gemini.state === "opening" ? "..." : "Gemini"}
                   </span>
                 </motion.button>
               </div>
 
-              <div className="mt-2 flex items-center justify-between gap-3">
-                <motion.button
-                  type="button"
-                  className="rounded-lg border px-3 py-2 text-xs font-mono transition-all"
-                  style={{
-                    borderColor:
-                      copy.state === "success"
-                        ? "rgba(34,197,94,0.45)"
-                        : "var(--border-strong)",
-                    color:
-                      copy.state === "success" ? "#86efac" : "var(--text-muted)",
-                    background: "transparent",
-                  }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={doCopy}
-                >
-                  {copy.state === "success" ? "✓ Copied" : "📋 Copy Prompt"}
-                </motion.button>
-
+              <div className="mt-3 flex items-center justify-between">
                 <button
                   type="button"
-                  className="text-xs italic underline-offset-2 hover:underline"
-                  style={{ color: "var(--text-dim)" }}
-                  onClick={() => setOpen(false)}
+                  className="text-[10px] font-mono font-bold tracking-widest text-[var(--accent)] hover:underline"
+                  onClick={doCopy}
                 >
-                  Hide prompt ↑
+                  {copy.state === "success" ? "✓ COPIED" : "📋 COPY PROMPT"}
                 </button>
+
+                <span className="text-[10px] font-mono italic text-[var(--text-dim)]">
+                  Launch to start learning session
+                </span>
               </div>
-
-              {(copy.message || chatgpt.message || claude.message || gemini.message) && (
-                <p className="mt-2 text-xs" style={{ color: "var(--text-dim)" }}>
-                  {copy.message || chatgpt.message || claude.message || gemini.message}
-                </p>
-              )}
-
-              <p className="mt-3 text-xs italic" style={{ color: "var(--text-dim)" }}>
-                💡 Tip: Paste your answers back here and ask the AI to grade them against the quiz.
-              </p>
             </div>
           </motion.div>
         )}
