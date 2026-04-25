@@ -81,10 +81,7 @@ export default function OnboardingPage() {
 
         {/* Contextual top bar */}
         <div className="border-b px-8 py-3 flex items-center justify-between" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg-elev)" }}>
-          <div className="flex items-center gap-4 flex-1 max-w-xl">
-            <OnboardingStepper currentStep={1} />
-          </div>
-          <div className="flex items-center gap-3 ml-4">
+          <div className="flex items-center gap-3 ml-auto">
             <div className="flex items-center gap-2">
               <CheckCircle size={14} className="text-green-500" />
               <span className="text-sm font-medium" style={{ color: "var(--text)" }}>
