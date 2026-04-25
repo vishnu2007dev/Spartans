@@ -132,8 +132,8 @@ export default function ScorePage() {
             {/* Right Column: Radar Chart */}
             <div className="w-full lg:w-[450px] xl:w-[500px] shrink-0">
               <div 
-                className="rounded-2xl p-6 border flex flex-col h-full min-h-[400px]"
-                style={{ backgroundColor: "var(--bg-elev)", borderColor: "var(--border)" }}
+                className="p-6 border flex flex-col h-full min-h-[400px] rounded-none"
+                style={{ borderColor: "var(--border)", backgroundColor: "transparent" }}
               >
                 <h3 className="font-bold text-lg mb-2" style={{ color: "var(--heading)" }}>Skill Breakdown</h3>
                 <p className="text-sm mb-6" style={{ color: "var(--text-dim)" }}>Your readiness mapped across 5 core dimensions.</p>
