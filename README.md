@@ -247,14 +247,6 @@ npm --prefix backend run build
 npm --prefix backend run test
 ```
 
-## Suggested next cleanup steps
-
-If you keep iterating after the hackathon, the highest-value cleanup is:
-
-1. Fix the `StartTestInput` typing issue in `frontend/app/plan/page.tsx`
-2. Replace mock fallback with explicit non-200 errors outside demo mode
-3. Add input fingerprinting so score/gaps cache invalidates automatically when the profile or selected jobs change
-4. Consolidate stale docs in `frontend/README.md` and `backend/README.md`
 
 ## Project intent
 
