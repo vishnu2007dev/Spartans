@@ -1,5 +1,7 @@
 # Unlockd
 
+[![Watch the demo](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=VIDEO_ID)
+
 Unlockd is a career-readiness web app that helps a user move from "I have a resume and a few target roles" to a concrete learning plan.
 
 The app takes a resume or profile, lets the user select real jobs, scores role readiness, surfaces the biggest gaps, clusters the highest-leverage skills, and generates a day-by-day roadmap with lightweight testing.
