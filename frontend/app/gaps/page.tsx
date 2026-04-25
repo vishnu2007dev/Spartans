@@ -35,6 +35,13 @@ import { API_BASE } from "@/lib/api";
 import type { Gap, GapsResult } from "@/lib/types";
 import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper";
 
+type GapsApiResponse = GapsResult & {
+  _meta?: {
+    source?: "ai" | "mock";
+    reason?: string;
+  };
+};
+
 const categoryOrder = ["Experience", "Skills", "Tooling"] as const;
 const categoryColor: Record<(typeof categoryOrder)[number], string> = {
   Experience: "#4a2283",
@@ -146,7 +153,6 @@ export default function GapsPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (gaps) return;
     if (selectedJobs.length === 0) {
       router.replace("/onboarding");
       return;
@@ -154,6 +160,8 @@ export default function GapsPage() {
 
     async function fetchGaps() {
       try {
+        setLoading(true);
+        setError("");
         const bodyProfile = profileText.trim() ? profileText : "No profile provided. Evaluate based on general expectations.";
         const res = await fetch(`${API_BASE}/api/gaps`, {
           method: "POST",
@@ -161,7 +169,10 @@ export default function GapsPage() {
           body: JSON.stringify({ profile: bodyProfile, selectedJobs }),
         });
         if (!res.ok) throw new Error("Gap analysis failed");
-        const data: GapsResult = await res.json();
+        const data: GapsApiResponse = await res.json();
+        if (data._meta?.source === "mock") {
+          setError(`Showing fallback gaps data (${data._meta.reason ?? "unknown_reason"}).`);
+        }
         setGaps(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Something went wrong.");

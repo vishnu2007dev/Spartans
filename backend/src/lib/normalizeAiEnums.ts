@@ -23,6 +23,22 @@ export function normalizeScorePayload(data: unknown): unknown {
     missingSkills: Array.isArray(d.missingSkills)
       ? d.missingSkills.map((x) => String(x))
       : [],
+    pros: Array.isArray(d.pros)
+      ? d.pros.map((x) => String(x))
+      : [],
+    cons: Array.isArray(d.cons)
+      ? d.cons.map((x) => String(x))
+      : [],
+    skillRadar: Array.isArray(d.skillRadar)
+      ? d.skillRadar.map((item) => {
+          if (!item || typeof item !== "object") return item;
+          const o = item as Record<string, unknown>;
+          return {
+            category: String(o.category ?? ""),
+            score: clamp0to100(num(o.score, 0)),
+          };
+        })
+      : [],
     perJob: Array.isArray(d.perJob)
       ? d.perJob.map((p) => {
           if (!p || typeof p !== "object") return p;

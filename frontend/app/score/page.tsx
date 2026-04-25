@@ -11,6 +11,13 @@ import { API_BASE } from "@/lib/api";
 import type { ScoreResult } from "@/lib/types";
 import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper";
 
+type ScoreApiResponse = ScoreResult & {
+  _meta?: {
+    source?: "ai" | "mock";
+    reason?: string;
+  };
+};
+
 export default function ScorePage() {
   const router = useRouter();
   const { profileText, selectedJobs, score, setScore } = useAppContext();
@@ -19,7 +26,6 @@ export default function ScorePage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (score && score.skillRadar) return;
     if (selectedJobs.length === 0) {
       router.replace("/onboarding");
       return;
@@ -27,6 +33,8 @@ export default function ScorePage() {
 
     async function fetchScore() {
       try {
+        setLoading(true);
+        setError("");
         const bodyProfile = profileText.trim() ? profileText : "No profile provided. Evaluate based on general expectations.";
         const res = await fetch(`${API_BASE}/api/score`, {
           method: "POST",
@@ -34,7 +42,10 @@ export default function ScorePage() {
           body: JSON.stringify({ profile: bodyProfile, selectedJobs }),
         });
         if (!res.ok) throw new Error("Score fetch failed");
-        const data: ScoreResult = await res.json();
+        const data: ScoreApiResponse = await res.json();
+        if (data._meta?.source === "mock") {
+          setError(`Showing fallback score data (${data._meta.reason ?? "unknown_reason"}).`);
+        }
         setScore(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Something went wrong.");
