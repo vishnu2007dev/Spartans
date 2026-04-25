@@ -4,6 +4,9 @@ import { buildPlanPrompt } from "../lib/aiPrompt";
 import { getMockPlan } from "../lib/mockResults";
 import { planResultSchema, daysSchema, difficultySchema } from "../lib/types";
 import { config } from "../config";
+import { completeOpenRouterUserJson } from "../lib/openRouterChat";
+import { parseAiJsonContent } from "../lib/parseAiJson";
+import { normalizePlanPayload } from "../lib/normalizeAiEnums";
 
 const router = Router();
 
@@ -13,17 +16,6 @@ const requestSchema = z.object({
   days: daysSchema,
   difficulty: difficultySchema,
 });
-
-async function callOpenRouter(prompt: string) {
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${config.openRouterApiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "openai/gpt-4o-mini", messages: [{ role: "user", content: prompt }] }),
-  });
-  if (!res.ok) return null;
-  const data = await res.json() as any;
-  return data.choices?.[0]?.message?.content ?? null;
-}
 
 router.post("/api/learning-path", async (req: Request, res: Response) => {
   const parsed = requestSchema.safeParse(req.body);
@@ -35,15 +27,31 @@ router.post("/api/learning-path", async (req: Request, res: Response) => {
 
   try {
     const { profile, chosenSkills, days, difficulty } = parsed.data;
-    const content = await callOpenRouter(buildPlanPrompt(profile, chosenSkills, days, difficulty));
-    if (!content) return res.status(200).json(getMockPlan());
+    const content = await completeOpenRouterUserJson(
+      buildPlanPrompt(profile, chosenSkills, days, difficulty)
+    );
+    if (!content) {
+      console.warn("[/api/learning-path] OpenRouter returned no content — using mock");
+      return res.status(200).json(getMockPlan());
+    }
 
     let aiResult: unknown;
-    try { aiResult = JSON.parse(content); } catch { return res.status(200).json(getMockPlan()); }
+    try {
+      aiResult = parseAiJsonContent(content);
+    } catch (e) {
+      console.warn("[/api/learning-path] JSON parse failed — using mock", e);
+      return res.status(200).json(getMockPlan());
+    }
 
-    const validated = planResultSchema.safeParse(aiResult);
-    return res.status(200).json(validated.success ? validated.data : getMockPlan());
-  } catch {
+    const normalized = normalizePlanPayload(aiResult);
+    const validated = planResultSchema.safeParse(normalized);
+    if (!validated.success) {
+      console.warn("[/api/learning-path] Zod validation failed — using mock", validated.error.flatten());
+      return res.status(200).json(getMockPlan());
+    }
+    return res.status(200).json(validated.data);
+  } catch (e) {
+    console.warn("[/api/learning-path] unexpected error — using mock", e);
     return res.status(200).json(getMockPlan());
   }
 });

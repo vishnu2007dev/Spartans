@@ -4,7 +4,9 @@ import { buildGapsPrompt } from "../lib/aiPrompt";
 import { getMockGaps } from "../lib/mockResults";
 import { gapsResultSchema, selectedJobSchema } from "../lib/types";
 import { config } from "../config";
-import { callOpenRouter, cleanJson } from "../lib/aiClient";
+import { completeOpenRouterUserJson } from "../lib/openRouterChat";
+import { parseAiJsonContent } from "../lib/parseAiJson";
+import { normalizeGapsPayload } from "../lib/normalizeAiEnums";
 
 const router = Router();
 
@@ -22,26 +24,32 @@ router.post("/api/gaps", async (req: Request, res: Response) => {
   if (!config.openRouterApiKey) return res.status(200).json(getMockGaps());
 
   try {
-    const rawContent = await callOpenRouter(buildGapsPrompt(parsed.data.profile, parsed.data.selectedJobs));
-    if (!rawContent) return res.status(200).json(getMockGaps());
+    const content = await completeOpenRouterUserJson(
+      buildGapsPrompt(parsed.data.profile, parsed.data.selectedJobs)
+    );
+    if (!content) {
+      console.warn("[/api/gaps] OpenRouter returned no content — using mock");
+      return res.status(200).json(getMockGaps());
+    }
 
     const content = cleanJson(rawContent);
     let aiResult: unknown;
-    try { 
-      aiResult = JSON.parse(content); 
-    } catch (e) { 
-      console.error("Gaps JSON parse failed:", content);
-      return res.status(200).json(getMockGaps()); 
+    try {
+      aiResult = parseAiJsonContent(content);
+    } catch (e) {
+      console.warn("[/api/gaps] JSON parse failed — using mock", e);
+      return res.status(200).json(getMockGaps());
     }
 
-    const validated = gapsResultSchema.safeParse(aiResult);
+    const normalized = normalizeGapsPayload(aiResult);
+    const validated = gapsResultSchema.safeParse(normalized);
     if (!validated.success) {
-      console.error("Gaps Zod validation failed:", validated.error.errors);
+      console.warn("[/api/gaps] Zod validation failed — using mock", validated.error.flatten());
       return res.status(200).json(getMockGaps());
     }
     return res.status(200).json(validated.data);
-  } catch (err) {
-    console.error("Gaps route error:", err);
+  } catch (e) {
+    console.warn("[/api/gaps] unexpected error — using mock", e);
     return res.status(200).json(getMockGaps());
   }
 });

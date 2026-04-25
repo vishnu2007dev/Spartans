@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import type {
   SelectedJob,
   ParsedResume,
@@ -8,9 +8,12 @@ import type {
   GapsResult,
   FocusResult,
   PlanResult,
+  PlanProgress,
   Days,
   Difficulty,
 } from "./types";
+
+const PROGRESS_KEY = "unlockd:progress";
 
 interface AppContextValue {
   // Step 1 — resume
@@ -44,6 +47,9 @@ interface AppContextValue {
   setDifficulty: (d: Difficulty) => void;
   plan: PlanResult | null;
   setPlan: (p: PlanResult | null) => void;
+
+  planProgress: PlanProgress;
+  setPlanProgress: React.Dispatch<React.SetStateAction<PlanProgress>>;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -59,6 +65,31 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
   const [days, setDays] = useState<Days>(14);
   const [difficulty, setDifficulty] = useState<Difficulty>("intermediate");
   const [plan, setPlan] = useState<PlanResult | null>(null);
+  const [planProgress, setPlanProgress] = useState<PlanProgress>({});
+
+  const skipSaveRef = useRef(true);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(PROGRESS_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as PlanProgress;
+        if (parsed && typeof parsed === "object") setPlanProgress(parsed);
+      }
+    } catch {
+      /* ignore */
+    }
+    skipSaveRef.current = false;
+  }, []);
+
+  useEffect(() => {
+    if (skipSaveRef.current) return;
+    try {
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(planProgress));
+    } catch {
+      /* ignore */
+    }
+  }, [planProgress]);
 
   return (
     <AppContext.Provider
@@ -83,6 +114,8 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
         setDifficulty,
         plan,
         setPlan,
+        planProgress,
+        setPlanProgress,
       }}
     >
       {children}

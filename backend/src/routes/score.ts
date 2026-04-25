@@ -4,7 +4,9 @@ import { buildScorePrompt } from "../lib/aiPrompt";
 import { getMockScore } from "../lib/mockResults";
 import { scoreResultSchema, selectedJobSchema } from "../lib/types";
 import { config } from "../config";
-import { callOpenRouter, cleanJson } from "../lib/aiClient";
+import { completeOpenRouterUserJson } from "../lib/openRouterChat";
+import { parseAiJsonContent } from "../lib/parseAiJson";
+import { normalizeScorePayload } from "../lib/normalizeAiEnums";
 
 const router = Router();
 
@@ -22,26 +24,32 @@ router.post("/api/score", async (req: Request, res: Response) => {
   if (!config.openRouterApiKey) return res.status(200).json(getMockScore());
 
   try {
-    const rawContent = await callOpenRouter(buildScorePrompt(parsed.data.profile, parsed.data.selectedJobs));
-    if (!rawContent) return res.status(200).json(getMockScore());
+    const content = await completeOpenRouterUserJson(
+      buildScorePrompt(parsed.data.profile, parsed.data.selectedJobs)
+    );
+    if (!content) {
+      console.warn("[/api/score] OpenRouter returned no content — using mock");
+      return res.status(200).json(getMockScore());
+    }
 
     const content = cleanJson(rawContent);
     let aiResult: unknown;
-    try { 
-      aiResult = JSON.parse(content); 
-    } catch (e) { 
-      console.error("JSON parse failed for content:", content);
-      return res.status(200).json(getMockScore()); 
+    try {
+      aiResult = parseAiJsonContent(content);
+    } catch (e) {
+      console.warn("[/api/score] JSON parse failed — using mock", e);
+      return res.status(200).json(getMockScore());
     }
 
-    const validated = scoreResultSchema.safeParse(aiResult);
+    const normalized = normalizeScorePayload(aiResult);
+    const validated = scoreResultSchema.safeParse(normalized);
     if (!validated.success) {
-      console.error("Score Zod validation failed:", validated.error.errors);
+      console.warn("[/api/score] Zod validation failed — using mock", validated.error.flatten());
       return res.status(200).json(getMockScore());
     }
     return res.status(200).json(validated.data);
-  } catch (err) {
-    console.error("Score route error:", err);
+  } catch (e) {
+    console.warn("[/api/score] unexpected error — using mock", e);
     return res.status(200).json(getMockScore());
   }
 });
