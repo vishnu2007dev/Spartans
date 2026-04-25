@@ -24,8 +24,21 @@ ${rawText}
 Respond ONLY with valid JSON:
 {
   "skills": ["<skill>"],
-  "experience": ["<role at company, duration>"],
-  "education": ["<degree at institution>"],
+  "experience": [
+    {
+      "company": "<company name>",
+      "title": "<job title>",
+      "dates": "<start and end dates>",
+      "highlights": ["<key achievement or responsibility>"]
+    }
+  ],
+  "education": [
+    {
+      "institution": "<school name>",
+      "degree": "<degree or major>",
+      "year": "<graduation year or dates>"
+    }
+  ],
   "rawText": "<full text as-is>"
 }`;
 }

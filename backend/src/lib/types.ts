@@ -28,10 +28,23 @@ export interface SelectedJob {
 
 // ── Step 1 — Resume parsing ──────────────────────────────────────────────────
 
+export interface ParsedExperience {
+  company: string;
+  title: string;
+  dates: string;
+  highlights: string[];
+}
+
+export interface ParsedEducation {
+  institution: string;
+  degree: string;
+  year: string;
+}
+
 export interface ParsedResume {
   skills: string[];
-  experience: string[];
-  education: string[];
+  experience: ParsedExperience[];
+  education: ParsedEducation[];
   rawText: string;
 }
 
@@ -130,10 +143,23 @@ export const analyzeRequestSchema = z.object({
   selectedJobs: z.array(selectedJobSchema).min(1).max(5),
 });
 
+export const parsedExperienceSchema = z.object({
+  company: z.string(),
+  title: z.string(),
+  dates: z.string(),
+  highlights: z.array(z.string()),
+});
+
+export const parsedEducationSchema = z.object({
+  institution: z.string(),
+  degree: z.string(),
+  year: z.string(),
+});
+
 export const parsedResumeSchema = z.object({
   skills: z.array(z.string()),
-  experience: z.array(z.string()),
-  education: z.array(z.string()),
+  experience: z.array(parsedExperienceSchema),
+  education: z.array(parsedEducationSchema),
   rawText: z.string(),
 });
 

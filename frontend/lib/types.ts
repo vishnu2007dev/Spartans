@@ -26,10 +26,23 @@ export interface SelectedJob {
 
 // ── Step 1 — Resume parsing ──────────────────────────────────────────────────
 
+export interface ParsedExperience {
+  company: string;
+  title: string;
+  dates: string;
+  highlights: string[];
+}
+
+export interface ParsedEducation {
+  institution: string;
+  degree: string;
+  year: string;
+}
+
 export interface ParsedResume {
   skills: string[];
-  experience: string[];
-  education: string[];
+  experience: ParsedExperience[];
+  education: ParsedEducation[];
   rawText: string;
 }
 

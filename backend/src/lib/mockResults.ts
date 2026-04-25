@@ -3,8 +3,27 @@ import { ScoreResult, GapsResult, FocusResult, PlanResult, ParsedResume } from "
 export function getMockParsedResume(): ParsedResume {
   return {
     skills: ["Python", "Excel", "Critical Thinking", "Teamwork", "Time Management"],
-    experience: ["Data Intern at Acme Corp, 3 months", "Research Assistant at State University, 6 months"],
-    education: ["B.S. Computer Science, State University (in progress, 2025)"],
+    experience: [
+      {
+        company: "Acme Corp",
+        title: "Data Intern",
+        dates: "June 2024 - Aug 2024",
+        highlights: ["Analyzed data using Python", "Built Excel dashboards"]
+      },
+      {
+        company: "State University",
+        title: "Research Assistant",
+        dates: "Jan 2024 - May 2024",
+        highlights: ["Conducted literature reviews", "Cleaned datasets for analysis"]
+      }
+    ],
+    education: [
+      {
+        institution: "State University",
+        degree: "B.S. Computer Science",
+        year: "2025"
+      }
+    ],
     rawText: "Mock resume text placeholder.",
   };
 }
