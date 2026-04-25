@@ -1,6 +1,6 @@
 # Unlockd
 
-[![Watch the demo](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=VIDEO_ID)
+[![Watch the demo](https://img.youtube.com/vi/RaBPcsKwTXs/0.jpg)](https://www.youtube.com/watch?v=RaBPcsKwTXs)
 
 Unlockd is a career-readiness web app that helps a user move from "I have a resume and a few target roles" to a concrete learning plan.
 
