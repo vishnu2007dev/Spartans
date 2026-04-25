@@ -10,6 +10,7 @@ import type { ParsedResume } from "@/lib/types";
 import { FilePreview } from "@/components/onboarding/FilePreview";
 import { ParsedDataEditor } from "@/components/onboarding/ParsedDataEditor";
 import { Sparkles, FileText, Upload, Eye, X, CheckCircle } from "lucide-react";
+import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -79,19 +80,16 @@ export default function OnboardingPage() {
 
         {/* Contextual top bar */}
         <div className="border-b px-8 py-3 flex items-center justify-between" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg-elev)" }}>
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-xs uppercase tracking-widest" style={{ color: "var(--text-dim)" }}>
-              Step 1 of 6
-            </span>
-            <div className="w-px h-4" style={{ backgroundColor: "var(--border)" }} />
+          <div className="flex items-center gap-4 flex-1 max-w-xl">
+            <OnboardingStepper currentStep={1} />
+          </div>
+          <div className="flex items-center gap-3 ml-4">
             <div className="flex items-center gap-2">
               <CheckCircle size={14} className="text-green-500" />
               <span className="text-sm font-medium" style={{ color: "var(--text)" }}>
                 {file?.name}
               </span>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
             <button
               onClick={() => setPdfDrawerOpen(true)}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors"
