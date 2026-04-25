@@ -11,7 +11,19 @@ import { API_BASE } from "@/lib/api";
 import type { Job, SelectedJob } from "@/lib/types";
 import type { JSearchJob } from "@/lib/jsearch";
 import AIThinking from "@/components/ui/ai-thinking";
-import { Search, Briefcase, Code, BarChart3, Megaphone, ArrowUp } from "lucide-react";
+import {
+  Search,
+  Briefcase,
+  Code,
+  BarChart3,
+  Megaphone,
+  ArrowUp,
+  LayoutGrid,
+  List,
+  MapPin,
+  Building2,
+  CheckCircle,
+} from "lucide-react";
 import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper";
 
 const MIN = 1;
@@ -49,6 +61,7 @@ export default function JobsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [searched, setSearched] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const maxReached = selectedIds.size >= MAX;
@@ -75,7 +88,6 @@ export default function JobsPage() {
 
   function handleSuggestionClick(q: string) {
     setQuery(q);
-    // Trigger search after setting query
     setTimeout(() => {
       setLoading(true);
       setError("");
@@ -151,16 +163,18 @@ export default function JobsPage() {
             </p>
           )}
 
-          {/* Search input — Claude-style with animated AI border */}
+          {/* Search input — AI border only when results are showing */}
           <form
             onSubmit={handleSearch}
             className={`w-full transition-all duration-500 ${hasResults ? "max-w-3xl px-5" : "max-w-2xl px-5"}`}
           >
-            <div className="ai-border-glow relative rounded-2xl p-[2px]">
-              {/* Input sits inside — white bg covers the center, gradient border shows through */}
+            <div className={`${hasResults ? "ai-border-glow" : ""} relative rounded-2xl p-[2px]`}>
               <div
                 className="relative flex items-center rounded-[14px]"
-                style={{ backgroundColor: "var(--bg)" }}
+                style={{
+                  backgroundColor: "var(--bg)",
+                  border: hasResults ? "none" : "1px solid var(--border)",
+                }}
               >
                 <Search size={18} className="absolute left-4 text-gray-400" />
                 <input
@@ -250,15 +264,177 @@ Final ranking: Organizing ${query}-related positions by match quality, location 
             <p className="text-sm text-center py-8" style={{ color: "var(--text-muted)" }}>No results found. Try a different search.</p>
           )}
 
-          {/* Results grid */}
+          {/* Results header with view toggle */}
           {hasResults && (
             <>
               <div className="flex items-center justify-between mb-6">
                 <p className="text-sm" style={{ color: "var(--text-muted)" }}>
                   {jobs.length} results for &ldquo;{query}&rdquo;
                 </p>
+                <div
+                  className="flex items-center rounded-lg p-0.5"
+                  style={{ backgroundColor: "var(--bg-elev)", border: "1px solid var(--border)" }}
+                >
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all"
+                    style={{
+                      backgroundColor: viewMode === "grid" ? "var(--bg)" : "transparent",
+                      color: viewMode === "grid" ? "var(--text)" : "var(--text-dim)",
+                      boxShadow: viewMode === "grid" ? "0 1px 2px rgba(0,0,0,0.06)" : "none",
+                    }}
+                  >
+                    <LayoutGrid size={14} />
+                    Grid
+                  </button>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all"
+                    style={{
+                      backgroundColor: viewMode === "list" ? "var(--bg)" : "transparent",
+                      color: viewMode === "list" ? "var(--text)" : "var(--text-dim)",
+                      boxShadow: viewMode === "list" ? "0 1px 2px rgba(0,0,0,0.06)" : "none",
+                    }}
+                  >
+                    <List size={14} />
+                    List
+                  </button>
+                </div>
               </div>
-              <JobGrid jobs={jobs} selectedIds={selectedIds} onToggle={handleToggle} maxReached={maxReached} />
+
+              {/* Grid View */}
+              {viewMode === "grid" && (
+                <JobGrid jobs={jobs} selectedIds={selectedIds} onToggle={handleToggle} maxReached={maxReached} />
+              )}
+
+              {/* List / Table View */}
+              {viewMode === "list" && (
+                <div
+                  className="rounded-xl overflow-hidden"
+                  style={{ border: "1px solid var(--border)", backgroundColor: "var(--bg)" }}
+                >
+                  {/* Table header */}
+                  <div
+                    className="grid items-center px-5 py-3 gap-4 text-xs font-medium uppercase tracking-wider"
+                    style={{
+                      color: "var(--text-dim)",
+                      backgroundColor: "var(--bg-elev)",
+                      borderBottom: "1px solid var(--border)",
+                      gridTemplateColumns: "2.5fr 1.5fr 1.5fr 1fr 80px",
+                    }}
+                  >
+                    <span>Role</span>
+                    <span>Company</span>
+                    <span>Location</span>
+                    <span>Type</span>
+                    <span className="text-right">Action</span>
+                  </div>
+
+                  {/* Table rows */}
+                  {jobs.map((job) => {
+                    const isSelected = selectedIds.has(job.id);
+                    const isDisabled = maxReached && !isSelected;
+                    return (
+                      <div
+                        key={job.id}
+                        className="grid items-center px-5 py-4 gap-4 transition-colors hover:bg-[var(--bg-elev)]"
+                        style={{
+                          gridTemplateColumns: "2.5fr 1.5fr 1.5fr 1fr 80px",
+                          borderBottom: "1px solid var(--border)",
+                          backgroundColor: isSelected ? "var(--accent-soft)" : "transparent",
+                          cursor: isDisabled ? "not-allowed" : "pointer",
+                          opacity: isDisabled ? 0.5 : 1,
+                        }}
+                        onClick={() => !isDisabled && handleToggle(job.id)}
+                      >
+                        {/* Role */}
+                        <div className="min-w-0 pr-4">
+                          <p
+                            className="text-sm font-semibold truncate"
+                            style={{ color: isSelected ? "var(--heading)" : "var(--text)" }}
+                          >
+                            {job.title}
+                          </p>
+                          {job.requiredSkills.length > 0 && (
+                            <div className="flex gap-1 mt-1 flex-wrap">
+                              {job.requiredSkills.slice(0, 3).map((skill) => (
+                                <span
+                                  key={skill}
+                                  className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+                                  style={{
+                                    backgroundColor: "var(--accent-soft)",
+                                    color: "var(--heading)",
+                                  }}
+                                >
+                                  {skill}
+                                </span>
+                              ))}
+                              {job.requiredSkills.length > 3 && (
+                                <span className="text-[10px] px-1.5 py-0.5" style={{ color: "var(--text-dim)" }}>
+                                  +{job.requiredSkills.length - 3}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Company */}
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <Building2 size={13} style={{ color: "var(--text-dim)", flexShrink: 0 }} />
+                          <span className="text-sm truncate" style={{ color: "var(--text-muted)" }}>
+                            {job.company}
+                          </span>
+                        </div>
+
+                        {/* Location */}
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <MapPin size={13} style={{ color: "var(--text-dim)", flexShrink: 0 }} />
+                          <span className="text-sm truncate" style={{ color: "var(--text-muted)" }}>
+                            {job.location || "Remote"}
+                          </span>
+                        </div>
+
+                        {/* Type */}
+                        <span
+                          className="text-xs font-mono uppercase truncate"
+                          style={{ color: "var(--text-dim)" }}
+                          title={job.type || "—"}
+                        >
+                          {job.type?.split(",")[0] || "—"}
+                        </span>
+
+                        {/* Action */}
+                        <div className="flex justify-end">
+                          {isSelected ? (
+                            <span
+                              className="flex items-center gap-1 text-xs font-medium"
+                              style={{ color: "var(--heading)" }}
+                            >
+                              <CheckCircle size={14} />
+                              Selected
+                            </span>
+                          ) : (
+                            <button
+                              className="text-xs px-3 py-1 rounded-lg font-medium transition-colors"
+                              style={{
+                                border: "1px solid var(--border)",
+                                color: "var(--text-muted)",
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleToggle(job.id);
+                              }}
+                              disabled={isDisabled}
+                            >
+                              Select
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </>
           )}
 
