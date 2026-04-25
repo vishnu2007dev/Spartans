@@ -340,7 +340,7 @@ export default function PlanPage() {
       <Nav />
       <main className="mx-auto max-w-[1280px] px-5 lg:px-8 py-12 pb-24">
         <div className="w-full max-w-xl mb-10 mx-auto">
-          <OnboardingStepper currentStep={6} />
+          <OnboardingStepper currentStep={6} backPath="/focus" />
         </div>
 
         {/* ── Config view (pre-generation) ── */}

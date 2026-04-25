@@ -224,7 +224,7 @@ export default function GapsPage() {
       <Nav />
       <main className="mx-auto max-w-[1320px] px-5 py-12 lg:px-8">
         <div className="mx-auto mb-10 w-full max-w-xl">
-          <OnboardingStepper currentStep={4} />
+          <OnboardingStepper currentStep={4} backPath="/score" nextPath="/focus" />
         </div>
 
         {loading && <p style={{ color: "var(--text-muted)" }}>Identifying your gaps...</p>}

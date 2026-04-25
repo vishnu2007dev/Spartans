@@ -147,7 +147,7 @@ export default function JobsPage() {
         >
           {/* Stepper */}
           <div className={`w-full max-w-xl mb-8 transition-opacity ${hasResults ? "opacity-60" : ""}`}>
-            <OnboardingStepper currentStep={2} />
+            <OnboardingStepper currentStep={2} backPath="/onboarding" nextPath="/score" />
           </div>
 
           {/* Big centered heading — only show when no results */}

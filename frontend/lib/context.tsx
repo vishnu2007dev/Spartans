@@ -14,6 +14,7 @@ import type {
 } from "./types";
 
 const PROGRESS_KEY = "unlockd:progress";
+const SESSION_KEY  = "unlockd:session";
 
 interface AppContextValue {
   // Step 1 — resume
@@ -71,24 +72,48 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     try {
+      const raw = localStorage.getItem(SESSION_KEY);
+      if (raw) {
+        const s = JSON.parse(raw);
+        if (s.parsedResume) setParsedResume(s.parsedResume);
+        if (s.profileText)  setProfileText(s.profileText);
+        if (s.selectedJobs?.length) setSelectedJobs(s.selectedJobs);
+        if (s.score)        setScore(s.score);
+        if (s.gaps)         setGaps(s.gaps);
+        if (s.focusResult)  setFocusResult(s.focusResult);
+        if (s.chosenSkills?.length) setChosenSkills(s.chosenSkills);
+        if (s.days)         setDays(s.days);
+        if (s.difficulty)   setDifficulty(s.difficulty);
+        if (s.plan)         setPlan(s.plan);
+      }
+    } catch { /* ignore */ }
+
+    try {
       const raw = localStorage.getItem(PROGRESS_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as PlanProgress;
         if (parsed && typeof parsed === "object") setPlanProgress(parsed);
       }
-    } catch {
-      /* ignore */
-    }
+    } catch { /* ignore */ }
+
     skipSaveRef.current = false;
   }, []);
 
   useEffect(() => {
     if (skipSaveRef.current) return;
     try {
+      localStorage.setItem(SESSION_KEY, JSON.stringify({
+        parsedResume, profileText, selectedJobs, score, gaps,
+        focusResult, chosenSkills, days, difficulty, plan,
+      }));
+    } catch { /* ignore */ }
+  }, [parsedResume, profileText, selectedJobs, score, gaps, focusResult, chosenSkills, days, difficulty, plan]);
+
+  useEffect(() => {
+    if (skipSaveRef.current) return;
+    try {
       localStorage.setItem(PROGRESS_KEY, JSON.stringify(planProgress));
-    } catch {
-      /* ignore */
-    }
+    } catch { /* ignore */ }
   }, [planProgress]);
 
   return (

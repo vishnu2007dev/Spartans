@@ -51,7 +51,7 @@ export default function ScorePage() {
       <Nav />
       <main className="mx-auto max-w-[1280px] px-5 lg:px-8 py-12">
         <div className="w-full max-w-xl mb-12 mx-auto">
-          <OnboardingStepper currentStep={3} />
+          <OnboardingStepper currentStep={3} backPath="/jobs" nextPath="/gaps" />
         </div>
 
         <h1 className="text-4xl font-bold tracking-tight mb-8" style={{ color: "var(--heading)", fontFamily: "var(--font-manrope)", letterSpacing: "-0.03em" }}>

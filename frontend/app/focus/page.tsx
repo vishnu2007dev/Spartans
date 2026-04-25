@@ -252,7 +252,7 @@ export default function FocusPage() {
 
       <main className="mx-auto max-w-[1100px] px-5 lg:px-8 py-12">
         <div className="w-full max-w-xl mb-10 mx-auto">
-          <OnboardingStepper currentStep={5} />
+          <OnboardingStepper currentStep={5} backPath="/gaps" nextPath="/plan" />
         </div>
 
         {/* ── Header card ── */}
