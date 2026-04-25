@@ -32,7 +32,6 @@ router.post("/api/gaps", async (req: Request, res: Response) => {
       return res.status(200).json(getMockGaps());
     }
 
-    const content = cleanJson(rawContent);
     let aiResult: unknown;
     try {
       aiResult = parseAiJsonContent(content);
