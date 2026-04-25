@@ -28,10 +28,23 @@ export interface SelectedJob {
 
 // ── Step 1 — Resume parsing ──────────────────────────────────────────────────
 
+export interface ParsedExperience {
+  company: string;
+  title: string;
+  dates: string;
+  highlights: string[];
+}
+
+export interface ParsedEducation {
+  institution: string;
+  degree: string;
+  year: string;
+}
+
 export interface ParsedResume {
   skills: string[];
-  experience: string[];
-  education: string[];
+  experience: ParsedExperience[];
+  education: ParsedEducation[];
   rawText: string;
 }
 
@@ -58,6 +71,9 @@ export interface ScoreResult {
   matchedSkills: string[];
   missingSkills: string[];
   perJob: PerJobScore[];
+  pros: string[];
+  cons: string[];
+  skillRadar: { category: string; score: number }[];
   summary: string;
 }
 
@@ -175,10 +191,23 @@ export const analyzeRequestSchema = z.object({
   selectedJobs: z.array(selectedJobSchema).min(1).max(5),
 });
 
+export const parsedExperienceSchema = z.object({
+  company: z.string(),
+  title: z.string(),
+  dates: z.string(),
+  highlights: z.array(z.string()),
+});
+
+export const parsedEducationSchema = z.object({
+  institution: z.string(),
+  degree: z.string(),
+  year: z.string(),
+});
+
 export const parsedResumeSchema = z.object({
   skills: z.array(z.string()),
-  experience: z.array(z.string()),
-  education: z.array(z.string()),
+  experience: z.array(parsedExperienceSchema),
+  education: z.array(parsedEducationSchema),
   rawText: z.string(),
 });
 
@@ -196,6 +225,12 @@ export const scoreResultSchema = z.object({
   matchedSkills: z.array(z.string()),
   missingSkills: z.array(z.string()),
   perJob: z.array(perJobScoreSchema),
+  pros: z.array(z.string()),
+  cons: z.array(z.string()),
+  skillRadar: z.array(z.object({
+    category: z.string(),
+    score: z.number().min(0).max(100),
+  })),
   summary: z.string(),
 });
 

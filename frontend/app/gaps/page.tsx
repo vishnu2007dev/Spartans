@@ -8,6 +8,7 @@ import { GapCard } from "@/components/PrioritySkillCard";
 import { useAppContext } from "@/lib/context";
 import { API_BASE } from "@/lib/api";
 import type { GapsResult } from "@/lib/types";
+import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper";
 
 export default function GapsPage() {
   const router = useRouter();
@@ -18,17 +19,18 @@ export default function GapsPage() {
 
   useEffect(() => {
     if (gaps) return;
-    if (!profileText || selectedJobs.length === 0) {
+    if (selectedJobs.length === 0) {
       router.replace("/onboarding");
       return;
     }
 
     async function fetchGaps() {
       try {
+        const bodyProfile = profileText.trim() ? profileText : "No profile provided. Evaluate based on general expectations.";
         const res = await fetch(`${API_BASE}/api/gaps`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ profile: profileText, selectedJobs }),
+          body: JSON.stringify({ profile: bodyProfile, selectedJobs }),
         });
         if (!res.ok) throw new Error("Gap analysis failed");
         const data: GapsResult = await res.json();
@@ -49,10 +51,10 @@ export default function GapsPage() {
   return (
     <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh" }}>
       <Nav />
-      <main className="mx-auto max-w-[1280px] px-5 lg:px-8 py-16">
-        <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: "var(--text-dim)" }}>
-          Step 4 of 6
-        </p>
+      <main className="mx-auto max-w-[1280px] px-5 lg:px-8 py-12">
+        <div className="w-full max-w-xl mb-10 mx-auto">
+          <OnboardingStepper currentStep={4} />
+        </div>
         <h1 className="text-4xl font-bold tracking-tight mb-8" style={{ color: "var(--heading)", fontFamily: "var(--font-manrope)", letterSpacing: "-0.03em" }}>
           Your gap analysis
         </h1>

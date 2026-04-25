@@ -12,6 +12,7 @@ export const jobs: Job[] = [
     requiredSkills: ["Product thinking", "User research", "Data analysis", "Communication", "Roadmapping"],
     preferredSkills: ["SQL", "Figma", "Agile/Scrum"],
     category: "Product",
+    url: "",
   },
   {
     id: "data-analyst-intern-meridian",
@@ -24,6 +25,7 @@ export const jobs: Job[] = [
     requiredSkills: ["SQL", "Data visualization", "Excel/Sheets", "Statistical analysis", "Communication"],
     preferredSkills: ["Tableau", "Python", "Looker"],
     category: "Data",
+    url: "",
   },
   {
     id: "business-analyst-intern-apex",
@@ -36,6 +38,7 @@ export const jobs: Job[] = [
     requiredSkills: ["Business analysis", "Data analysis", "Problem solving", "Communication", "Excel/Sheets"],
     preferredSkills: ["SQL", "Process mapping", "PowerPoint"],
     category: "Strategy",
+    url: "",
   },
   {
     id: "tpm-intern-vertex",
@@ -48,6 +51,7 @@ export const jobs: Job[] = [
     requiredSkills: ["Project management", "Communication", "Agile/Scrum", "Risk management", "Stakeholder management"],
     preferredSkills: ["JIRA", "SQL", "Technical background"],
     category: "Product",
+    url: "",
   },
   {
     id: "swe-intern-luminary",
@@ -60,6 +64,7 @@ export const jobs: Job[] = [
     requiredSkills: ["JavaScript/TypeScript", "React", "Data structures & algorithms", "Git", "Problem solving"],
     preferredSkills: ["Node.js", "SQL", "System design basics"],
     category: "Engineering",
+    url: "",
   },
   {
     id: "ops-analyst-intern-coreops",
@@ -72,6 +77,7 @@ export const jobs: Job[] = [
     requiredSkills: ["Data analysis", "Process improvement", "Excel/Sheets", "Communication", "Problem solving"],
     preferredSkills: ["SQL", "Tableau", "Operations research"],
     category: "Operations",
+    url: "",
   },
   {
     id: "ux-research-intern-designify",
@@ -84,6 +90,7 @@ export const jobs: Job[] = [
     requiredSkills: ["User research", "Usability testing", "Communication", "Synthesis & analysis", "Figma"],
     preferredSkills: ["Survey design", "Affinity mapping", "Quantitative research"],
     category: "Design",
+    url: "",
   },
   {
     id: "growth-marketing-intern-scalr",
@@ -96,6 +103,7 @@ export const jobs: Job[] = [
     requiredSkills: ["Data analysis", "Marketing analytics", "A/B testing", "Excel/Sheets", "Communication"],
     preferredSkills: ["SQL", "Google Analytics", "Looker"],
     category: "Marketing",
+    url: "",
   },
   {
     id: "product-ops-intern-flowstate",
@@ -108,6 +116,7 @@ export const jobs: Job[] = [
     requiredSkills: ["Product thinking", "Process improvement", "Data analysis", "Communication", "Project management"],
     preferredSkills: ["SQL", "Notion/Confluence", "Agile/Scrum"],
     category: "Operations",
+    url: "",
   },
   {
     id: "strategy-analytics-intern-pinnacle",
@@ -120,5 +129,6 @@ export const jobs: Job[] = [
     requiredSkills: ["Data analysis", "Financial modeling", "Excel/Sheets", "Communication", "Research"],
     preferredSkills: ["SQL", "PowerPoint", "Python"],
     category: "Strategy",
+    url: "",
   },
 ];

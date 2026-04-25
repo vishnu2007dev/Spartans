@@ -6,9 +6,10 @@ interface JobGridProps {
   selectedIds: Set<string>;
   onToggle: (id: string) => void;
   maxReached: boolean;
+  onView: (job: Job) => void;
 }
 
-export function JobGrid({ jobs, selectedIds, onToggle, maxReached }: JobGridProps) {
+export function JobGrid({ jobs, selectedIds, onToggle, maxReached, onView }: JobGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {jobs.map((job) => (
@@ -18,6 +19,7 @@ export function JobGrid({ jobs, selectedIds, onToggle, maxReached }: JobGridProp
           selected={selectedIds.has(job.id)}
           onToggle={() => onToggle(job.id)}
           disabled={maxReached && !selectedIds.has(job.id)}
+          onClick={() => onView(job)}
         />
       ))}
     </div>

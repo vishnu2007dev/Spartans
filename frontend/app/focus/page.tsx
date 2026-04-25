@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useAppContext } from "@/lib/context";
 import { API_BASE } from "@/lib/api";
 import type { FocusResult } from "@/lib/types";
+import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper";
 
 export default function FocusPage() {
   const router = useRouter();
@@ -54,10 +55,10 @@ export default function FocusPage() {
   return (
     <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh" }}>
       <Nav />
-      <main className="mx-auto max-w-[1280px] px-5 lg:px-8 py-16">
-        <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: "var(--text-dim)" }}>
-          Step 5 of 6
-        </p>
+      <main className="mx-auto max-w-[1280px] px-5 lg:px-8 py-12">
+        <div className="w-full max-w-xl mb-10 mx-auto">
+          <OnboardingStepper currentStep={5} />
+        </div>
         <h1 className="text-4xl font-bold tracking-tight mb-3" style={{ color: "var(--heading)", fontFamily: "var(--font-manrope)", letterSpacing: "-0.03em" }}>
           Pick your focus skills
         </h1>

@@ -24,8 +24,21 @@ ${rawText}
 Respond ONLY with valid JSON:
 {
   "skills": ["<skill>"],
-  "experience": ["<role at company, duration>"],
-  "education": ["<degree at institution>"],
+  "experience": [
+    {
+      "company": "<company name>",
+      "title": "<job title>",
+      "dates": "<start and end dates>",
+      "highlights": ["<key achievement or responsibility>"]
+    }
+  ],
+  "education": [
+    {
+      "institution": "<school name>",
+      "degree": "<degree or major>",
+      "year": "<graduation year or dates>"
+    }
+  ],
   "rawText": "<full text as-is>"
 }`;
 }
@@ -54,7 +67,7 @@ export function buildScorePrompt(profile: string, selectedJobs: SelectedJob[]): 
 
   return `${GUARDRAILS}
 
-Compare the user profile against the selected jobs and produce a readiness score.
+Compare the user profile against the selected jobs and produce a readiness score, detailed pros and cons, and a skill radar breakdown.
 
 ## User Profile
 ${profile}
@@ -68,6 +81,15 @@ Respond ONLY with valid JSON:
   "projectedScore": <0-100>,
   "matchedSkills": ["<skills user already has>"],
   "missingSkills": ["<skills user lacks>"],
+  "pros": ["<3-5 bullet points of the user's strengths relative to the jobs>"],
+  "cons": ["<3-5 bullet points of the user's weaknesses or missing requirements>"],
+  "skillRadar": [
+    { "category": "Technical Skills", "score": <0-100> },
+    { "category": "Tools & Frameworks", "score": <0-100> },
+    { "category": "Experience Match", "score": <0-100> },
+    { "category": "Soft Skills", "score": <0-100> },
+    { "category": "Domain Relevance", "score": <0-100> }
+  ],
   "perJob": [
     {
       "title": "<job title>",

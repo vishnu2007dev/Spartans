@@ -11,18 +11,20 @@ interface JobCardProps {
   selected: boolean;
   onToggle: () => void;
   disabled?: boolean;
+  onClick?: () => void;
 }
 
-export function JobCard({ job, selected, onToggle, disabled }: JobCardProps) {
+export function JobCard({ job, selected, onToggle, disabled, onClick }: JobCardProps) {
   return (
     <div
+      onClick={onClick}
       className={cn(
-        "relative rounded-xl p-5 flex flex-col gap-3 transition-all",
+        "relative rounded-xl p-5 flex flex-col gap-3 transition-all cursor-pointer",
         selected
           ? "border border-[var(--accent)]"
           : disabled
           ? "border border-[var(--border)] opacity-40 cursor-not-allowed"
-          : "border border-[var(--border)] hover:border-[var(--border-strong)]"
+          : "border border-[var(--border)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-elev)]"
       )}
       style={{
         backgroundColor: selected ? "var(--accent-soft)" : "var(--bg-elev)",
@@ -93,7 +95,10 @@ export function JobCard({ job, selected, onToggle, disabled }: JobCardProps) {
           disabled={disabled}
           aria-pressed={selected}
           aria-label={`${selected ? "Deselect" : "Select"} ${job.title} at ${job.company}`}
-          onClick={disabled ? undefined : onToggle}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!disabled) onToggle();
+          }}
           className="w-full"
         >
           {selected ? "Selected ✓" : "Select"}

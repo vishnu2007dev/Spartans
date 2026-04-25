@@ -15,6 +15,7 @@ export interface Job {
   requiredSkills: string[];
   preferredSkills: string[];
   category: string;
+  url: string;
 }
 
 export interface SelectedJob {
@@ -26,10 +27,23 @@ export interface SelectedJob {
 
 // ── Step 1 — Resume parsing ──────────────────────────────────────────────────
 
+export interface ParsedExperience {
+  company: string;
+  title: string;
+  dates: string;
+  highlights: string[];
+}
+
+export interface ParsedEducation {
+  institution: string;
+  degree: string;
+  year: string;
+}
+
 export interface ParsedResume {
   skills: string[];
-  experience: string[];
-  education: string[];
+  experience: ParsedExperience[];
+  education: ParsedEducation[];
   rawText: string;
 }
 
@@ -56,6 +70,9 @@ export interface ScoreResult {
   matchedSkills: string[];
   missingSkills: string[];
   perJob: PerJobScore[];
+  pros: string[];
+  cons: string[];
+  skillRadar: { category: string; score: number }[];
   summary: string;
 }
 

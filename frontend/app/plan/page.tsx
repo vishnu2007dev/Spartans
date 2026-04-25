@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import { useAppContext } from "@/lib/context";
 import { API_BASE } from "@/lib/api";
 import type { PlanResult, Difficulty, Days } from "@/lib/types";
-import type { StartTestInput } from "@/hooks/useTaskTest";
+import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper";
 
 const DIFFICULTIES: { value: Difficulty; label: string; descriptor: string }[] = [
   { value: "beginner", label: "Beginner", descriptor: "Foundational concepts" },
@@ -53,14 +53,15 @@ export default function PlanPage() {
   }
 
   async function handleGenerate() {
-    if (!profileText || chosenSkills.length === 0) return;
+    if (chosenSkills.length === 0) return;
     setLoading(true);
     setError("");
     try {
+      const bodyProfile = profileText.trim() ? profileText : "No profile provided. Evaluate based on general expectations.";
       const res = await fetch(`${API_BASE}/api/learning-path`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile: profileText, chosenSkills, days, difficulty }),
+        body: JSON.stringify({ profile: bodyProfile, chosenSkills, days, difficulty }),
       });
       if (!res.ok) throw new Error("Plan generation failed");
       const data: PlanResult = await res.json();
@@ -75,21 +76,11 @@ export default function PlanPage() {
   return (
     <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh" }}>
       <Nav />
-      <main className="mx-auto max-w-[1280px] px-5 py-16 pb-24 lg:px-8">
-        <p
-          className="mb-3 font-mono text-xs uppercase tracking-widest"
-          style={{ color: "var(--text-dim)" }}
-        >
-          Step 6 of 6
-        </p>
-        <h1
-          className="mb-3 text-4xl font-bold tracking-tight"
-          style={{
-            color: "var(--heading)",
-            fontFamily: "var(--font-manrope)",
-            letterSpacing: "-0.03em",
-          }}
-        >
+      <main className="mx-auto max-w-[1280px] px-5 lg:px-8 py-12 pb-24">
+        <div className="w-full max-w-xl mb-10 mx-auto">
+          <OnboardingStepper currentStep={6} />
+        </div>
+        <h1 className="text-4xl font-bold tracking-tight mb-3" style={{ color: "var(--heading)", fontFamily: "var(--font-manrope)", letterSpacing: "-0.03em" }}>
           Your learning plan
         </h1>
         <p className="mb-10 text-base" style={{ color: "var(--text-muted)" }}>
