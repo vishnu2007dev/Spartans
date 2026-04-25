@@ -32,6 +32,7 @@ router.post("/api/score", async (req: Request, res: Response) => {
       return res.status(200).json(getMockScore());
     }
 
+    const content = cleanJson(rawContent);
     let aiResult: unknown;
     try {
       aiResult = parseAiJsonContent(content);
