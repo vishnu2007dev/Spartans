@@ -7,7 +7,7 @@ import { Footer } from "@/components/landing/Footer";
 export default function LandingHero() {
   return (
     <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh" }}>
-      <Nav />
+      <Nav landing />
       <main>
         <Hero />
         <Bento />

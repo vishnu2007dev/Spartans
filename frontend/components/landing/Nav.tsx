@@ -5,7 +5,11 @@ import { useTheme } from "next-themes";
 import { Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function Nav() {
+interface NavProps {
+  landing?: boolean;
+}
+
+export function Nav({ landing = false }: NavProps) {
   const { theme, setTheme } = useTheme();
 
   return (
@@ -61,15 +65,6 @@ export function Nav() {
           </span>
         </Link>
 
-        {/* Center nav — hidden on mobile */}
-        <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
-          {["Product", "Roadmaps", "Pricing", "Docs"].map((item) => (
-            <Button key={item} variant="ghost" size="sm" asChild>
-              <Link href="#">{item}</Link>
-            </Button>
-          ))}
-        </nav>
-
         {/* Right actions */}
         <div className="flex items-center gap-2">
           <Button
@@ -87,12 +82,11 @@ export function Nav() {
               aria-hidden="true"
             />
           </Button>
-          <Button variant="ghost" size="sm" className="hidden sm:inline-flex" asChild>
-            <Link href="#">Sign in</Link>
-          </Button>
-          <Button size="sm" asChild>
-            <Link href="/jobs">Get started</Link>
-          </Button>
+          {landing && (
+            <Button size="sm" asChild>
+              <Link href="/onboarding">Get started</Link>
+            </Button>
+          )}
         </div>
       </div>
     </header>
