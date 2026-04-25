@@ -155,13 +155,15 @@ Current routes:
 
 ### 1. Install dependencies
 
-From the repo root:
+From the repo root, run all three installs in order:
 
 ```bash
 npm install
 npm --prefix frontend install
 npm --prefix backend install
 ```
+
+> The root `npm install` only installs root-level tooling. The frontend and backend each have their own `node_modules` and **must be installed separately** — skipping the last two commands will cause `next` and `ts-node` to be missing when you run `npm run dev`.
 
 ### 2. Configure environment variables
 
@@ -295,3 +297,4 @@ This codebase is built around one product idea:
 `resume + target roles -> score -> gaps -> focus -> plan`
 
 That path is the core of the app. Most of the repo structure, UI decisions, and API surface exist to support that single workflow.
+
