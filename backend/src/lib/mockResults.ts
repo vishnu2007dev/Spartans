@@ -34,6 +34,23 @@ export function getMockScore(): ScoreResult {
     projectedScore: 78,
     matchedSkills: ["Python", "Excel", "Critical Thinking", "Teamwork", "Time Management"],
     missingSkills: ["SQL", "Tableau", "Power BI", "Agile Methodology", "Stakeholder Management", "A/B Testing"],
+    pros: [
+      "Strong foundation in Python and Data Analysis",
+      "Good academic background with relevant coursework",
+      "Demonstrated soft skills like teamwork and critical thinking"
+    ],
+    cons: [
+      "Lacks hands-on experience with SQL databases",
+      "No direct experience building live dashboards for stakeholders",
+      "Missing Agile/Scrum familiarity required for some roles"
+    ],
+    skillRadar: [
+      { category: "Technical Skills", score: 45 },
+      { category: "Tools & Frameworks", score: 30 },
+      { category: "Experience Match", score: 50 },
+      { category: "Soft Skills", score: 85 },
+      { category: "Domain Relevance", score: 60 }
+    ],
     perJob: [
       { title: "Data Analyst Intern", company: "Meridian Analytics", score: 55, matchedCount: 3, totalRequired: 5 },
       { title: "Product Manager Intern", company: "NovaTech", score: 40, matchedCount: 2, totalRequired: 5 },

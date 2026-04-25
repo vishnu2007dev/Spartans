@@ -70,6 +70,9 @@ export interface ScoreResult {
   matchedSkills: string[];
   missingSkills: string[];
   perJob: PerJobScore[];
+  pros: string[];
+  cons: string[];
+  skillRadar: { category: string; score: number }[];
   summary: string;
 }
 

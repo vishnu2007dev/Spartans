@@ -71,6 +71,9 @@ export interface ScoreResult {
   matchedSkills: string[];
   missingSkills: string[];
   perJob: PerJobScore[];
+  pros: string[];
+  cons: string[];
+  skillRadar: { category: string; score: number }[];
   summary: string;
 }
 
@@ -177,6 +180,12 @@ export const scoreResultSchema = z.object({
   matchedSkills: z.array(z.string()),
   missingSkills: z.array(z.string()),
   perJob: z.array(perJobScoreSchema),
+  pros: z.array(z.string()),
+  cons: z.array(z.string()),
+  skillRadar: z.array(z.object({
+    category: z.string(),
+    score: z.number().min(0).max(100),
+  })),
   summary: z.string(),
 });
 
