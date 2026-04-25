@@ -219,40 +219,6 @@ Those routes:
 4. validate with Zod
 5. return AI data when valid
 
-If AI output cannot be used, the backend currently falls back to mock data and includes metadata:
-
-```json
-"_meta": {
-  "source": "mock",
-  "reason": "schema_validation_failed"
-}
-```
-
-The frontend surfaces that fallback state on the score and gaps pages instead of silently pretending it is real AI output.
-
-## Hackathon notes
-
-This repo is hackathon-shaped. That means it is optimized for demo velocity over full product hardening.
-
-Current tradeoffs:
-
-- No real auth flow
-- Landing nav is intentionally minimal and only reflects real app actions
-- Session state is persisted locally in the browser
-- Backend still supports mock fallback for resiliency/demo continuity
-- Some older routes and docs are still present from earlier iterations
-
-## Known issues
-
-These are worth knowing before you present or continue building:
-
-- Frontend TypeScript is not fully clean right now.
-  [frontend/app/plan/page.tsx](C:/Users/Om/Desktop/Kiro_Spark/frontend/app/plan/page.tsx:1) references `StartTestInput`, which is currently missing and causes `tsc --noEmit` in `frontend/` to fail.
-
-- The backend is in better shape than the frontend for typechecking.
-  `backend` TypeScript currently passes.
-
-- Score and gaps can still return mock data when AI calls fail, but the response now includes `_meta.source` and `_meta.reason` so it is debuggable.
 
 ## Useful scripts
 
