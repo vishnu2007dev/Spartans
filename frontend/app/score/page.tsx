@@ -60,7 +60,7 @@ export default function ScorePage() {
         {error && <p style={{ color: "#ef4444" }}>{error}</p>}
 
         {score && (
-          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-10">
             {/* Left Column: Scores, Summary, Pros/Cons */}
             <div className="flex-1 flex flex-col gap-8">
               <div className="flex gap-8">
@@ -129,14 +129,25 @@ export default function ScorePage() {
               </div>
             </div>
 
+            <div
+              aria-hidden="true"
+              className="hidden lg:block w-px self-stretch shrink-0"
+              style={{ background: "linear-gradient(180deg, transparent, var(--accent), transparent)" }}
+            />
+
             {/* Right Column: Radar Chart */}
             <div className="w-full lg:w-[450px] xl:w-[500px] shrink-0">
               <div 
-                className="p-6 border flex flex-col h-full min-h-[400px] rounded-none"
-                style={{ borderColor: "var(--border)", backgroundColor: "transparent" }}
+                className="p-6 flex flex-col h-full min-h-[400px]"
+                style={{ 
+                  backgroundColor: "transparent", 
+                  borderRadius: "0px" 
+                }}
               >
-                <h3 className="font-bold text-lg mb-2" style={{ color: "var(--heading)" }}>Skill Breakdown</h3>
-                <p className="text-sm mb-6" style={{ color: "var(--text-dim)" }}>Your readiness mapped across 5 core dimensions.</p>
+                <div>
+                  <h3 className="font-bold text-lg mb-2" style={{ color: "var(--heading)" }}>Skill Breakdown</h3>
+                  <p className="text-sm mb-6" style={{ color: "var(--text-dim)" }}>Your readiness mapped across 5 core dimensions.</p>
+                </div>
                 
                 <div className="flex-1 w-full relative">
                   {score.skillRadar && score.skillRadar.length > 0 ? (
@@ -151,7 +162,7 @@ export default function ScorePage() {
                         <Tooltip 
                           contentStyle={{ backgroundColor: "var(--bg)", borderColor: "var(--border)", borderRadius: "8px", color: "var(--text)" }}
                           itemStyle={{ color: "var(--accent)", fontWeight: 600 }}
-                          formatter={(value: any) => [`${value}/100`, 'Score']}
+                          formatter={(value: unknown) => [`${value ?? 0}/100`, "Score"]}
                         />
                         <Radar 
                           name="Readiness" 
